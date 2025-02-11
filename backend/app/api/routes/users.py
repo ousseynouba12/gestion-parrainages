@@ -1,10 +1,13 @@
-from fastapi import FastAPI
-from app.api.routes.users import router
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from app.db.database import get_db
 
-app = FastAPI()
+router = APIRouter()
 
-app.include_router(router, prefix="/users", tags=["Users"])
-
-@app.get("/")
-def read_root():
-    return {"message": "Hello World"}
+@router.get("/test-db")
+def test_db(db: Session = Depends(get_db)):
+    try:
+        db.execute("SELECT 1")
+        return {"message": "Connexion réussie ! 🎉"}
+    except Exception as e:
+        return {"error": str(e)}
