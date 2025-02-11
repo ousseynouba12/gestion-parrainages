@@ -7,7 +7,7 @@ router = APIRouter()
 @router.get("/test-db")
 def test_db(db: Session = Depends(get_db)):
     try:
-        db.execute("SELECT 1")  # Simple requête pour tester
+        db.execute("SELECT 1")  # Test de la connexion à la base de données
         return {"message": "Connexion réussie ! 🎉"}
     except Exception as e:
         return {"error": str(e)}
