@@ -5,3 +5,4 @@ pydantic
 mysql-connector-python
 python-jose[cryptography]
 passlib
+sqlalchemy
