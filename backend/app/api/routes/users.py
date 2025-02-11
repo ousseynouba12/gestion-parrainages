@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
-from app.db.database import get_db
+from fastapi import FastAPI
+from app.api.routes.users import router
 
-router = APIRouter()
+app = FastAPI()
 
-@router.get("/hello")
-def test_route():
-    return {"message": "Route works!"}
+app.include_router(router, prefix="/users", tags=["Users"])
+
+@app.get("/")
+def read_root():
+    return {"message": "Hello World"}
