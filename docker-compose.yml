@@ -6,21 +6,4 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=mysql://user:password@db:3306/parrainages
-    depends_on:
-      - db
-
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: parrainages
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-
-volumes:
-  mysql_data:
+      - DATABASE_URL=mysql+pymysql://root:zMjDQSJrIfdTgCvHEXEyRQKWLDxdNJJc@junction.proxy.rlwy.net:16519/railway
