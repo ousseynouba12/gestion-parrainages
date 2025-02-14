@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, Date, Enum
 from app.core.database import Base
 
 class Electeur(Base):
-    __tablename__ = "electeur"
+    __tablename__ = "Electeur"
 
     numElecteur = Column(String(20), primary_key=True)
     numCIN = Column(String(20), unique=True, nullable=False, index=True)

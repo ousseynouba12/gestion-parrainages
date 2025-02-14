@@ -3,9 +3,9 @@ from sqlalchemy.orm import relationship
 from app.core.database import Base
 
 class Parrain(Base):
-    __tablename__ = "parrain"
+    __tablename__ = "Parrain"
 
-    numElecteur = Column(String(20), ForeignKey("electeur.numElecteur"), primary_key=True)
+    numElecteur = Column(String(20), ForeignKey("Electeur.numElecteur"), primary_key=True)
     email = Column(String(100), unique=True, nullable=False, index=True)
     telephone = Column(String(20), unique=True, nullable=False)
     codeAuthentification = Column(String(6), nullable=False)
