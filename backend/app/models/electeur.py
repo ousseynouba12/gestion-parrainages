@@ -1,4 +1,6 @@
-from sqlalchemy import Column, String, Date, Enum
+from sqlalchemy import Column, String, Date, Enum, Text, Integer, DateTime, Boolean
+from sqlalchemy.orm import relationship
+from datetime import datetime
 from app.core.database import Base
 
 class Electeur(Base):
@@ -12,4 +14,11 @@ class Electeur(Base):
     lieuNaissance = Column(String(100), nullable=False)
     sexe = Column(Enum("M", "F", name="sexe_enum"), nullable=False)
     bureauVote = Column(String(100), nullable=False)
-
+    
+    # Discriminateur pour l'héritage
+    type = Column(String(50))
+    
+    __mapper_args__ = {
+        'polymorphic_identity': 'electeur',
+        'polymorphic_on': type
+    }

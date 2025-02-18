@@ -6,7 +6,7 @@ from app.core.database import Base
 class MembreDGE(Base):
     __tablename__ = "Membre_dge"
 
-    idMembre = Column(Integer, primary_key=True, index=True)
+    idMembre = Column(Integer, primary_key=True, index=True,  autoincrement=True)
     nom = Column(String(50), nullable=False)
     prenom = Column(String(50), nullable=False)
     email = Column(String(100), unique=True, nullable=False, index=True)

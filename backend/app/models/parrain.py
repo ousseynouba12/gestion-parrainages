@@ -11,4 +11,5 @@ class Parrain(Base):
     codeAuthentification = Column(String(6), nullable=False)
 
     electeur = relationship("Electeur")
+    parrainages = relationship("Parrainage", back_populates="parrain")
 

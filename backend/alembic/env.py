@@ -8,15 +8,17 @@ from app.core.config import settings
 
 import app.models.membre_dge
 import app.models.electeur
+import app.models.fichier_electoral
+import app.models.tentative_upload
+import app.models.electeur_temporaire
+import app.models.electeur_temporaire_valide
 import app.models.candidat
 import app.models.parrain
 import app.models.parrainage
 import app.models.periode_parrainage
-import app.models.fichier_electoral
-import app.models.tentative_upload
-import app.models.code_auth
-import app.models.validation
-
+import app.models.code_securite_candidat
+import app.models.code_authentification_parrain
+import app.models.audit_log
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

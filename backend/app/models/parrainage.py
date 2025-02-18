@@ -1,5 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from app.core.database import Base
+from sqlalchemy.orm import relationship
+
 
 class Parrainage(Base):
     __tablename__ = "Parrainage"
@@ -10,3 +12,5 @@ class Parrainage(Base):
     codeValidation = Column(String(6), nullable=False)
     dateParrainage = Column(DateTime, nullable=False)
 
+    candidat = relationship("Candidat", back_populates="parrainages")
+    parrain = relationship("Parrain", back_populates="parrainages")
