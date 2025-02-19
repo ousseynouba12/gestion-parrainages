@@ -1,0 +1,19 @@
+<div class="container mt-5">
+    <h2 class="text-center">Configuration des Parrainages</h2>
+    
+    <div class="mb-3">
+        <label for="startDate" class="form-label">Date de début :</label>
+        <input type="date" id="startDate" class="form-control" [(ngModel)]="startDate" (change)="validateDates()">
+        <div *ngIf="startError" class="text-danger">{{ startError }}</div>
+    </div>
+
+    <div class="mb-3">
+        <label for="endDate" class="form-label">Date de fin :</label>
+        <input type="date" id="endDate" class="form-control" [(ngModel)]="endDate" (change)="validateDates()">
+        <div *ngIf="endError" class="text-danger">{{ endError }}</div>
+    </div>
+
+    <button class="btn btn-success w-100" [disabled]="!isValid" (click)="saveDates()">Enregistrer</button>
+
+    <p *ngIf="successMessage" class="text-success mt-3">{{ successMessage }}</p>
+</div>

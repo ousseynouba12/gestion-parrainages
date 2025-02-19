@@ -1,193 +1,26 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<div class="container">
+    <h2>Enregistrement des Candidats</h2>
+    <label for="carteElecteur">Numéro de Carte d’Électeur</label>
+    <input type="text" [(ngModel)]="carteElecteur" placeholder="Entrez le numéro" required>
+    <p *ngIf="messageErreur" class="error">{{ messageErreur }}</p>
+    <button (click)="verifierCandidat()">Vérifier</button>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-
-    <!--Bootstrap 5 icons CDN-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
-    <title>CRUD Operations</title>
-
-    <link rel="stylesheet" href="candidat.component.css">
-  </head>
-  <body>
-       <h1 style="text-align: center;">Gestion des Candidats</h1>
-
-    <section class="p-3">
-
-        <div class="row">
-            <div class="col-12">
-                <button class="btn btn-primary newUser" data-bs-toggle="modal" data-bs-target="#userForm">Nouveau Candidat <i class="bi bi-people"></i></button>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-12">
-                <table class="table table-striped table-hover mt-3 text-center table-bordered">
-
-                    <thead>
-                        <tr>
-                            <th>Num Electeur</th>
-                            <th>Nom</th>
-                            <th>Prenom</th>
-                            <th>Email</th>
-                            <th>Telephone</th>
-                            <th>Parti Politique</th>
-                            <th>Slogan</th>
-                            <th>Url</th>
-                            <th>Start Date</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="data"></tbody>
-
-                </table>
-            </div>
-        </div>
-
-    </section>
-
-
-    <!--Modal Form-->
-    <div class="modal fade" id="userForm">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h4 class="modal-title">Formulaire d'ajout</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <div class="modal-body">
-
-                    <form action="#" id="myForm">
-
-                        <div class="card imgholder">
-                            <label for="imgInput" class="upload">
-                                <input type="file" name="" id="imgInput">
-                                <i class="bi bi-plus-circle-dotted"></i>
-                            </label>
-                            
-                        </div>
-
-                        <div class="inputField">
-                            <div>
-                                <label for="name">Nom:</label>
-                                <input type="text" name="" id="name" required>
-                            </div>
-                            <div>
-                                <label for="age">Prenom:</label>
-                                <input type="text" name="" id="Prenom" required>
-                            </div>
-                            <div>
-                                <label for="email">E-mail:</label>
-                                <input type="email" name="" id="email" required>
-                            </div>
-                            <div>
-                                <label for="phone">Telephone:</label>
-                                <input type="text" name="" id="phone" minlength="11" maxlength="11" required>
-                            </div>
-                            <div>
-                                <label for="city">Parti Politique:</label>
-                                <input type="text" name="" id="partipolique" required>
-                            </div>
-                            
-                           
-                            <div>
-                                <label for="post">Slogan:</label>
-                                <input type="text" name="" id="slogan" required>
-                            </div>
-                            <div>
-                                <label for="post">Url:</label>
-                                <input type="text" name="" id="url" required>
-                            </div>
-                            <div>
-                                <label for="sDate">Start Date:</label>
-                                <input type="date" name="" id="sDate" required>
-                            </div>
-                        </div>
-
-                    </form>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" form="myForm" class="btn btn-primary submit">Submit</button>
-                </div>
-            </div>
-        </div>
+    <div *ngIf="formCandidat">
+        <h3>Informations du Candidat</h3>
+        <input type="text" [(ngModel)]="nom" placeholder="Nom" disabled>
+        <input type="text" [(ngModel)]="prenom" placeholder="Prénom" disabled>
+        <input type="date" [(ngModel)]="dateNaissance" disabled>
+        
+        <h3>Informations Complémentaires</h3>
+        <input type="email" [(ngModel)]="email" placeholder="Email" required>
+        <input type="tel" [(ngModel)]="telephone" placeholder="Numéro de Téléphone" required>
+        <input type="text" [(ngModel)]="partiPolitique" placeholder="Nom du Parti (optionnel)">
+        <input type="text" [(ngModel)]="slogan" placeholder="Slogan du candidat">
+        <input type="color" [(ngModel)]="couleur1" title="Première couleur">
+        <input type="color" [(ngModel)]="couleur2" title="Deuxième couleur">
+        <input type="color" [(ngModel)]="couleur3" title="Troisième couleur">
+        <input type="url" [(ngModel)]="urlInfo" placeholder="Lien vers infos">
+        <input type="file" (change)="onFileSelected($event)" accept="image/*">
+        <button (click)="enregistrerCandidat()">Enregistrer </button>
     </div>
-
-    <!--Read Data Modal-->
-    <div class="modal fade" id="readData">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h4 class="modal-title">Profile</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <div class="modal-body">
-
-                    <form action="#" id="myForm">
-
-                        <div class="card imgholder">
-                            <img src="./image/Profile Icon.webp" alt="" width="200" height="200" class="showImg">
-                        </div>
-
-                        <div class="inputField">
-                            <div>
-                                <label for="name">Name:</label>
-                                <input type="text" name="" id="showName" disabled>
-                            </div>
-                            <div>
-                                <label for="Prenom">Age:</label>
-                                <input type="text" name="" id="showprenom" disabled>
-                            </div>
-                            <div>
-                                <label for="email">E-mail:</label>
-                                <input type="email" name="" id="showEmail" disabled>
-                            </div>
-                            <div>
-                                <label for="phone">Telephone:</label>
-                                <input type="text" name="" id="showTelephone" minlength="11" maxlength="11" disabled>
-                            </div>
-                           
-                            <div>
-                                <label for="post">Parti Politique:</label>
-                                <input type="text" name="" id="showPartiPolitque" disabled>
-                            </div>
-                            <div>
-                                <label for="post">Slogan:</label>
-                                <input type="text" name="" id="showSlogan" disabled>
-                            </div>
-                            <div>
-                                <label for="post">Url:</label>
-                                <input type="text" name="" id="showUrl" disabled>
-                            </div>
-                            <div>
-                                <label for="sDate">Start Date:</label>
-                                <input type="date" name="" id="showsDate" disabled>
-                            </div>
-                        </div>
-
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-
-    <script src="app.js"></script>
-  </body>
-</html>
+</div>
