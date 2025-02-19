@@ -1,20 +1,21 @@
-from pydantic import BaseModel, EmailStr
-from typing import Literal,Optional
+from pydantic import BaseModel, EmailStr, Field
+from typing import Optional
 
-class MembreDGEBase(BaseModel):
+class MembreDGECreation(BaseModel):
     nom: str
     prenom: str
     email: EmailStr
-    telephone: str
-    role: Literal["ADMIN", "MEMBRE"]
+    telephone: str = Field(..., pattern=r'^\+?[0-9]{8,15}$')   # Validation du format téléphone
+    role: str = "MEMBRE"
+    password: str
 
-class MembreDGECreation(MembreDGEBase):
-    pass  # Le champ idMembre étant une clé primaire auto-incrémentée, il ne doit pas être fourni lors de la création
-				    #Pydantic exige par défaut tous les champs sauf s'ils sont explicitement marqués comme optionnels
-
-class MembreDGEOUT(MembreDGEBase):
+class MembreDGEOUT(BaseModel):
     idMembre: int
+    nom: str
+    prenom: str
+    email: str
+    telephone: str
+    role: str
 
     class Config:
         from_attributes = True
-
