@@ -1,0 +1,54 @@
+<div class="container">
+    <header>
+        <h1>Liste des Candidats Enregistrés</h1>
+    </header>
+    
+    <section class="candidate-list">
+        <!-- Tableau affichant la liste des candidats -->
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Date de Naissance</th>
+                    <th>Parti Politique</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Exemple de candidat, vous devrez répéter ces lignes dynamiquement avec des données -->
+                <tr>
+                    <td>001</td>
+                    <td>Dupont</td>
+                    <td>Jean</td>
+                    <td>01/01/1990</td>
+                    <td>Parti A</td>
+                    <td>
+                        <button>Voir Détails</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>002</td>
+                    <td>Martin</td>
+                    <td>Claire</td>
+                    <td>05/02/1985</td>
+                    <td>Parti B</td>
+                    <td>
+                        <button >Voir Détails</button>
+                    </td>
+                </tr>
+                <!-- Vous ajouterez ici dynamiquement plus de lignes -->
+            </tbody>
+        </table>
+    </section>
+    
+    <div id="candidate-details" class="candidate-details" style="display:none;">
+        <!-- Détails de la candidature -->
+        <h2>Détails de la Candidature</h2>
+        <div id="details-content">
+            <!-- Le contenu des détails sera rempli dynamiquement via JavaScript -->
+        </div>
+        <button >Fermer</button>
+    </div>
+</div>
