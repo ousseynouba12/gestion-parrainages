@@ -5,6 +5,7 @@ import { PeriodeparrainageComponent } from './periodeparrainage/periodeparrainag
 import { CandidatComponent } from './candidat/candidat.component';
 import { FichierelectoralComponent} from './fichierelectoral/fichierelectoral.component';
 import { SuiviparrainageComponent } from './suiviparrainage/suiviparrainage.component';
+import { ListecandidatComponent} from './listecandidat/listecandidat.component';
 
 export const routes: Routes = [ 
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -15,6 +16,7 @@ export const routes: Routes = [
     { path: 'candidat', component: CandidatComponent },
     { path: 'fichierelectoral', component: FichierelectoralComponent },
     { path: 'suiviparrainage', component: SuiviparrainageComponent },
+    { path: 'listecandidat', component: ListecandidatComponent },
 
 ];
 
