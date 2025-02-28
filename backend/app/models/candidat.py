@@ -21,7 +21,7 @@ class Candidat(Electeur):
     slogan = Column(Text)
     photo = Column(Text)
     couleur1 = Column(String(10))
-    couleur2 = Column(String(10))
+    #couleur2 = Column(String(10))
     couleur3 = Column(String(10))
     urlInfo = Column(Text)
 
