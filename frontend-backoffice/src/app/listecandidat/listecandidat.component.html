@@ -2,9 +2,9 @@
     <header>
         <h1>Liste des Candidats Enregistrés</h1>
     </header>
-    
+
+    <!-- Tableau des candidats -->
     <section class="candidate-list">
-        <!-- Tableau affichant la liste des candidats -->
         <table>
             <thead>
                 <tr>
@@ -17,38 +17,35 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Exemple de candidat, vous devrez répéter ces lignes dynamiquement avec des données -->
-                <tr>
-                    <td>001</td>
-                    <td>Dupont</td>
-                    <td>Jean</td>
-                    <td>01/01/1990</td>
-                    <td>Parti A</td>
+                <tr *ngFor="let candidat of candidats">
+                    <td>{{ candidat.id }}</td>
+                    <td>{{ candidat.nom }}</td>
+                    <td>{{ candidat.prenom }}</td>
+                    <td>{{ candidat.naissance }}</td>
+                    <td>{{ candidat.parti }}</td>
                     <td>
-                        <button>Voir Détails</button>
+                        <button (click)="showDetails(candidat)">Voir Détails</button>
                     </td>
                 </tr>
-                <tr>
-                    <td>002</td>
-                    <td>Martin</td>
-                    <td>Claire</td>
-                    <td>05/02/1985</td>
-                    <td>Parti B</td>
-                    <td>
-                        <button >Voir Détails</button>
-                    </td>
-                </tr>
-                <!-- Vous ajouterez ici dynamiquement plus de lignes -->
             </tbody>
         </table>
     </section>
-    
-    <div id="candidate-details" class="candidate-details" style="display:none;">
-        <!-- Détails de la candidature -->
+
+    <!-- Détails du candidat -->
+    <div *ngIf="selectedCandidat" class="candidate-details">
         <h2>Détails de la Candidature</h2>
-        <div id="details-content">
-            <!-- Le contenu des détails sera rempli dynamiquement via JavaScript -->
-        </div>
-        <button >Fermer</button>
+        <p><strong>Nom:</strong> {{ selectedCandidat.nom }}</p>
+        <p><strong>Prénom:</strong> {{ selectedCandidat.prenom }}</p>
+        <p><strong>Date de Naissance:</strong> {{ selectedCandidat.naissance }}</p>
+        <p><strong>Email:</strong> {{ selectedCandidat.email }}</p>
+        <p><strong>Téléphone:</strong> {{ selectedCandidat.telephone }}</p>
+        <p><strong>Parti Politique:</strong> {{ selectedCandidat.parti }}</p>
+        <p><strong>Slogan:</strong> {{ selectedCandidat.slogan }}</p>
+        <p><strong>Photo:</strong> <img [src]="selectedCandidat.photo" alt="Photo de {{ selectedCandidat.nom }}" width="100"></p>
+        <p><strong>Couleurs du Parti:</strong> {{ selectedCandidat.couleurs.join(", ") }}</p>
+        <p><strong>Informations supplémentaires:</strong> 
+            <a [href]="selectedCandidat.url" target="_blank">{{ selectedCandidat.url }}</a>
+        </p>
+        <button (click)="closeDetails()">Fermer</button>
     </div>
 </div>
