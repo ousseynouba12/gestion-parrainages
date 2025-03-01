@@ -1,0 +1,11 @@
+
+<h1>IMPORTATION DES ELECTEUR</h1>
+<form (ngSubmit)="upload()">
+  <label>Fichier CSV</label><br>
+  <input type="file" (change)="onFileChange($event)" /><br>
+  <label>Empreinte SHA256</label><br>
+  <input type="text" [(ngModel)]="checksum" /><br>
+  <button type="submit">Importer</button>
+  <p *ngIf="message">{{ message }}</p>
+</form>
+
