@@ -9,9 +9,9 @@ class CandidatBase(BaseModel):
     partiPolitique: Optional[str] = None
     slogan: Optional[str] = None
     photo: Optional[str] = None
-    couleur1: Optional[str] = None
-    couleur2: Optional[str] = None
-    couleur3: Optional[str] = None
+    #couleur1: Optional[str] = None
+    #couleur2: Optional[str] = None
+    #couleur3: Optional[str] = None
     urlInfo: Optional[str] = None
 
 class CandidatCreate(CandidatBase):
