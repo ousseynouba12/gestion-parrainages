@@ -141,10 +141,10 @@ class _CandidateInputScreenState extends State<CandidateInputScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.pink[50],
+      backgroundColor: Color(0xFF0A0E21), // Fond bleu de nuit
       appBar: AppBar(
         title: Text('Saisie Candidat'),
-        backgroundColor: Colors.pinkAccent,
+        backgroundColor: Color(0xFF1D1E33), // AppBar bleu de nuit plus foncé
         centerTitle: true,
       ),
       body: Padding(
@@ -157,7 +157,7 @@ class _CandidateInputScreenState extends State<CandidateInputScreen> {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.pinkAccent,
+                color: Colors.blueAccent, // Texte bleu ciel
               ),
             ),
             SizedBox(height: 30),
@@ -170,7 +170,7 @@ class _CandidateInputScreenState extends State<CandidateInputScreen> {
                 labelText: 'Numéro de la carte d\'électeur',
                 hintText: 'Exemple: 1234567890',
                 border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.credit_card, color: Colors.pinkAccent),
+                prefixIcon: Icon(Icons.credit_card, color: Colors.blueAccent), // Icône bleu ciel
                 errorText: !_isVoterCardValid ? 'Numéro incorrect ou non trouvé' : null,
               ),
             ),
@@ -180,12 +180,12 @@ class _CandidateInputScreenState extends State<CandidateInputScreen> {
             ElevatedButton(
               onPressed: _validateVoterCard,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
+                backgroundColor: const Color.fromARGB(255, 12, 33, 68), // Bouton bleu ciel
                 padding: EdgeInsets.symmetric(vertical: 15),
               ),
               child: Text(
                 'Vérifier la carte d\'électeur',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
             SizedBox(height: 20),
@@ -202,7 +202,7 @@ class _CandidateInputScreenState extends State<CandidateInputScreen> {
                       labelText: 'Numéro CIN',
                       hintText: 'Exemple: A1234567',
                       border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.credit_card, color: Colors.pinkAccent),
+                      prefixIcon: Icon(Icons.credit_card, color: Colors.blueAccent), // Icône bleu ciel
                       errorText: !_isCINValid ? 'Format CIN invalide' : null,
                     ),
                   ),
@@ -210,14 +210,14 @@ class _CandidateInputScreenState extends State<CandidateInputScreen> {
                   ElevatedButton(
                     onPressed: _isLoading ? null : _sendVerificationCode,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pinkAccent,
+                      backgroundColor: Colors.blueAccent, // Bouton bleu ciel
                       padding: EdgeInsets.symmetric(vertical: 15),
                     ),
                     child: _isLoading
                         ? CircularProgressIndicator(color: Colors.white)
                         : Text(
                             'Envoyer le code de vérification',
-                            style: TextStyle(fontSize: 16),
+                            style: TextStyle(fontSize: 16, color: Colors.white),
                           ),
                   )
                 ],
@@ -236,19 +236,19 @@ class _CandidateInputScreenState extends State<CandidateInputScreen> {
                       labelText: 'Entrez le code de vérification',
                       hintText: 'Exemple: 123456',
                       border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.lock, color: Colors.pinkAccent),
+                      prefixIcon: Icon(Icons.lock, color: Colors.blueAccent), // Icône bleu ciel
                     ),
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: _validateCode,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.greenAccent,
+                      backgroundColor: Colors.blueAccent, // Bouton bleu ciel
                       padding: EdgeInsets.symmetric(vertical: 15),
                     ),
                     child: Text(
                       'Valider le code',
-                      style: TextStyle(fontSize: 16),
+                      style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),
                 ],
@@ -270,12 +270,12 @@ class _CandidateInputScreenState extends State<CandidateInputScreen> {
                   children: [
                     Text(
                       'Informations du Candidat:',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                     SizedBox(height: 10),
-                    Text('Nom: ${_candidates[_voterCardController.text]}'),
-                    Text('CIN: ${_cinController.text}'),
-                    Text('Carte électeur: ${_voterCardController.text}'),
+                    Text('Nom: ${_candidates[_voterCardController.text]}', style: TextStyle(color: Colors.white)),
+                    Text('CIN: ${_cinController.text}', style: TextStyle(color: Colors.white)),
+                    Text('Carte électeur: ${_voterCardController.text}', style: TextStyle(color: Colors.white)),
                   ],
                 ),
               ),
