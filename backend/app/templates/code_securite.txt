@@ -1,0 +1,16 @@
+Bonjour {{ prenom }} {{ nom }},
+
+Voici votre code de sécurité pour accéder à votre espace candidat pour l'élection :
+
+{{ code }}
+
+Ce code est valable jusqu'à la génération d'un nouveau code. Il vous sera demandé lors de votre connexion à votre espace candidat.
+
+Si vous n'avez pas demandé ce code, veuillez ignorer cet email ou contacter notre support.
+
+Cordialement,
+L'équipe électorale
+
+---
+Cet email a été envoyé le {{ date_envoi.strftime('%d/%m/%Y à %H:%M') }}.
+Merci de ne pas répondre à cet email qui est généré automatiquement.

@@ -8,7 +8,7 @@ class CodeSecuriteCandidat(Base):
     
     idCode = Column(Integer, primary_key=True, autoincrement=True)
     numCandidat = Column(String(20), ForeignKey("Candidat.numElecteur"), nullable=False)
-    code = Column(String(6), nullable=False)
+    code = Column(String(128), nullable=False)
     dateEnvoi = Column(DateTime, nullable=False, default=datetime.utcnow)
     estActif = Column(Boolean, default=True)
     

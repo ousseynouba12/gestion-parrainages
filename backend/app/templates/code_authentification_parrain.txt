@@ -1,0 +1,16 @@
+Bonjour {{ prenom }} {{ nom }},
+
+Vous avez demandé un code d'authentification pour accéder à votre espace parrain. Voici votre code :
+
+{{ code }}
+
+Ce code est valable pendant 30 minutes à partir de {{ date_envoi.strftime('%H:%M') }}.
+
+Si vous n'êtes pas à l'origine de cette demande, veuillez ignorer cet email.
+
+Cordialement,
+L'équipe des élections
+
+---
+Cet email a été envoyé le {{ date_envoi.strftime('%d/%m/%Y à %H:%M') }}.
+Ne répondez pas à cet email, il est généré automatiquement.

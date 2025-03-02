@@ -1,12 +1,23 @@
-from pydantic import BaseModel, EmailStr
+# app/schemas/parrain.py
+from pydantic import BaseModel
+from datetime import date
 
 class ParrainBase(BaseModel):
     numElecteur: str
-    email: EmailStr
+    email: str
     telephone: str
     codeAuthentification: str
 
-class Parrain(ParrainBase):
-    class Config:
-        from_attributes = True
+class ParrainCreate(ParrainBase):
+    pass
 
+class Parrain(ParrainBase):
+    nom: str
+    prenom: str
+    dateNaissance: date
+    lieuNaissance: str
+    sexe: str
+    bureauVote: str
+
+    class Config:
+        from_attribute = True
