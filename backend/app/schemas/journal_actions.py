@@ -13,4 +13,4 @@ class JournalActionDB(JournalActionCreate):
     dateAction: datetime
 
     class Config:
-        orm_mode = True
+        from_attribute = True

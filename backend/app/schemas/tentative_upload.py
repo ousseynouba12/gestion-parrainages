@@ -14,4 +14,4 @@ class TentativeUploadDB(TentativeUploadCreate):
     dateTentative: datetime
 
     class Config:
-        orm_mode = True
+        from_attribute = True

@@ -19,4 +19,4 @@ class FichierElectoralDB(FichierElectoralBase):
     idMembreValidation: Optional[int] = None
 
     class Config:
-        orm_mode = True
+        from_attribute = True
