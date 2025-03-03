@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.schemas.membre_dge import MembreDGECreate, MembreDGEOut
 from app.models.membre_dge import MembreDGE
 from app.core.database import get_db
-from app.core.security import get_password_hash
+from backend.app.core.auth import get_password_hash
 
 router = APIRouter()
 

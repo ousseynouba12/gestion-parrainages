@@ -1,20 +1,17 @@
-from pydantic import BaseModel
+# app/schemas/tentative_upload.py
+from pydantic import BaseModel, Field
 from datetime import datetime
+from typing import Optional
 
-class TentativeUploadBase(BaseModel):
+class TentativeUploadCreate(BaseModel):
     idFichier: int
-    dateTentative: datetime
-    idMembre: int
     ip: str
     clefUtilisee: str
     resultat: bool
 
-class TentativeUploadCreation(TentativeUploadBase):
-    pass
-
-class TentativeUpload(TentativeUploadBase):
+class TentativeUploadDB(TentativeUploadCreate):
     idTentative: int
+    dateTentative: datetime
 
     class Config:
-        from_attributes = True
-
+        orm_mode = True

@@ -1,0 +1,45 @@
+[alembic]
+# Path to migration scripts
+script_location = alembic
+
+# SQLAlchemy connection string
+sqlalchemy.url = mysql://root:zMjDQSJrIfdTgCvHEXEyRQKWLDxdNJJc@junction.proxy.rlwy.net:16519/railway
+
+# Préserve les autres configurations
+prepend_sys_path = .
+
+version_path_separator = os
+
+[loggers]
+keys = root,sqlalchemy,alembic
+
+[handlers]
+keys = console
+
+[formatters]
+keys = generic
+
+[logger_root]
+level = WARNING
+handlers = console
+qualname =
+
+[logger_sqlalchemy]
+level = WARNING
+handlers =
+qualname = sqlalchemy.engine
+
+[logger_alembic]
+level = INFO
+handlers =
+qualname = alembic
+
+[handler_console]
+class = StreamHandler
+args = (sys.stderr,)
+level = NOTSET
+formatter = generic
+
+[formatter_generic]
+format = %(levelname)-5.5s [%(name)s] %(message)s
+datefmt = %H:%M:%S

@@ -10,5 +10,5 @@ from app.schemas.parrainage import *
 from app.schemas.periode_parrainage import *
 from app.schemas.code_securite_candidat import *
 from app.schemas.code_authentification_parrain import *
-from app.schemas.audit_log import *
-
+from app.schemas.auth import *
+from app.schemas.journal_actions import *
