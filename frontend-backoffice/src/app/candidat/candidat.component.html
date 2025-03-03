@@ -1,0 +1,26 @@
+<div class="container">
+    <h2>Enregistrement des Candidats</h2>
+    <label for="carteElecteur">Numéro de Carte d’Électeur</label>
+    <input type="text" [(ngModel)]="carteElecteur" placeholder="Entrez le numéro" required>
+    <p *ngIf="messageErreur" class="error">{{ messageErreur }}</p>
+    <button (click)="verifierCandidat()">Vérifier</button>
+
+    <div *ngIf="formCandidat">
+        <h3>Informations du Candidat</h3>
+        <input type="text" [(ngModel)]="nom" placeholder="Nom" disabled>
+        <input type="text" [(ngModel)]="prenom" placeholder="Prénom" disabled>
+        <input type="date" [(ngModel)]="dateNaissance" disabled>
+        
+        <h3>Informations Complémentaires</h3>
+        <input type="email" [(ngModel)]="email" placeholder="Email" required>
+        <input type="tel" [(ngModel)]="telephone" placeholder="Numéro de Téléphone" required>
+        <input type="text" [(ngModel)]="partiPolitique" placeholder="Nom du Parti (optionnel)">
+        <input type="text" [(ngModel)]="slogan" placeholder="Slogan du candidat">
+        <input type="color" [(ngModel)]="couleur1" title="Première couleur">
+        <input type="color" [(ngModel)]="couleur2" title="Deuxième couleur">
+        <input type="color" [(ngModel)]="couleur3" title="Troisième couleur">
+        <input type="url" [(ngModel)]="urlInfo" placeholder="Lien vers infos">
+        <input type="file" (change)="onFileSelected($event)" accept="image/*">
+        <button (click)="enregistrerCandidat()">Enregistrer </button>
+    </div>
+</div>
