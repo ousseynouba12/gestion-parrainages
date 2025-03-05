@@ -5,7 +5,7 @@ from typing import Optional
 class ParrainageBase(BaseModel):
     numElecteur: str
     numCandidat: str
-    codeValidation: str
+    code_validation: str
     dateParrainage: Optional[datetime] = datetime.utcnow()
 
 class ParrainageOut(ParrainageBase):

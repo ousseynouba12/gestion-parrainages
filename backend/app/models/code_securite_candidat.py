@@ -9,9 +9,7 @@ class CodeSecuriteCandidat(Base):
     idCode = Column(Integer, primary_key=True, autoincrement=True)
     numCandidat = Column(String(20), ForeignKey("Candidat.numElecteur"), nullable=False)
     code = Column(String(128), nullable=False)
-    dateEnvoi = Column(DateTime, nullable=False, default=datetime.utcnow)
-    estActif = Column(Boolean, default=True)
-    
+    dateEnvoi = Column(DateTime, nullable=False, default=datetime.utcnow)    
     # Relation avec Candidat
     candidat = relationship("Candidat", back_populates="codes_securite")
 

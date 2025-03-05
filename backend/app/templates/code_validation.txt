@@ -1,10 +1,10 @@
 Bonjour {{ prenom }} {{ nom }},
 
-Vous avez demandé un code d'authentification pour accéder à votre espace parrain. Voici votre code :
+Vous avez demandé un code de validation pour parrainer. Voici votre code :
 
 {{ code }}
 
-Ce code est valable à partir de {{ date_envoi.strftime('%H:%M') }}.
+Ce code est valable pendant 2 minutes à partir de {{ date_envoi.strftime('%H:%M') }}.
 
 Si vous n'êtes pas à l'origine de cette demande, veuillez ignorer cet email.
 

@@ -33,6 +33,9 @@ class ParrainCodeGeneratorService:
         parrain = db.query(Parrain).filter(Parrain.numElecteur == num_parrain).first()
         if not parrain:
             raise ValueError(f"Parrain avec ID {num_parrain} non trouvé")
+        
+        parrain.tentatives_validation = 0
+        parrain.derniere_tentative = None
 
         # Générer et enregistrer un nouveau code
         new_code = self.generate_code()
@@ -83,12 +86,64 @@ class ParrainCodeGeneratorService:
         if parrain.email:
             return self.notification_service.send_email(
                 to_email=parrain.email,
-                subject="Votre code d'authentification pour le parrainage",
+                subject="Votre code de validation pour le parrainage",
                 content="",  # Non utilisé car on utilise un template
-                template_name="code_authentification_parrain",
+                template_name="code_validation",
                 template_context=template_context
             )
         return False
+    
+    @staticmethod
+    def verify_code(db: Session, num_parrain: str, code: str, expiration_minutes: int = 2) -> bool:
+        """
+        Vérifie si le code fourni est valide pour un parrain donné.
+        Un code est valide s'il correspond, n'a pas expiré et si le nombre de tentatives n'est pas dépassé.
+        
+        Args:
+            db (Session): Session de base de données
+            num_parrain (str): Numéro d'électeur du parrain
+            code (str): Code à vérifier
+            expiration_minutes (int): Délai d'expiration en minutes
+            
+        Returns:
+            bool: True si le code est valide, False sinon
+        """
+        MAX_TENTATIVES = 3  # Nombre maximum de tentatives autorisées
+        DELAI_BLOCAGE = timedelta(minutes=15)  # Délai de blocage après dépassement des tentatives
 
+        # Récupérer le parrain
+        parrain = db.query(Parrain).filter(Parrain.numElecteur == num_parrain).first()
+        if not parrain:
+            raise ValueError("Parrain non trouvé")
+        # Vérifier si le parrain est bloqué
+        if (parrain.derniere_tentative and (datetime.utcnow() - parrain.derniere_tentative) < DELAI_BLOCAGE) and parrain.tentatives_validation >= MAX_TENTATIVES:
+            raise ValueError("Trop de tentatives. Veuillez réessayer plus tard.")
+
+        # Récupérer le code le plus récent pour ce parrain
+        latest_code = db.query(CodeAuthentificationParrain).filter(
+            CodeAuthentificationParrain.numParrain == num_parrain
+        ).order_by(CodeAuthentificationParrain.dateEnvoi.desc()).first()
+
+        if not latest_code:
+            return False
+
+        # Vérifier si le code correspond et n'a pas expiré
+        expiration_time = latest_code.dateEnvoi + timedelta(minutes=expiration_minutes)
+        now = datetime.utcnow()
+
+        if latest_code.code == code and now <= expiration_time:
+            # Réinitialiser les tentatives si le code est valide
+            parrain.tentatives_validation = 0
+            parrain.derniere_tentative = None
+            db.commit()
+            return True
+
+        # Si le code est invalide, incrémenter le nombre de tentatives
+        parrain.tentatives_validation += 1
+        parrain.derniere_tentative = datetime.utcnow()
+        db.commit()
+
+
+        return False
 # Créer une instance singleton du service
 parrain_code_generator_service = ParrainCodeGeneratorService()

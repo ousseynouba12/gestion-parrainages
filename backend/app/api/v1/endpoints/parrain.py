@@ -13,7 +13,7 @@ from app.schemas.parrain import ParrainBase, ParrainCreate, Parrain as ParrainSc
 from app.services.parrain_code_generator import parrain_code_generator_service
 from app.services.hashing import hash_code, verify_code
 
-router = APIRouter(prefix="/parrain", tags=["parrain"])
+router = APIRouter()
 
 @router.post("/register", response_model=ParrainSchema, status_code=status.HTTP_201_CREATED)
 def register_parrain(parrain_data: ParrainCreate, db: Session = Depends(get_db)):
@@ -117,7 +117,6 @@ def request_authentication_code(num_electeur: str, db: Session = Depends(get_db)
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Parrain non trouvé"
             )
-
         # Générer un nouveau code
         new_code = parrain_code_generator_service.generate_code()
 

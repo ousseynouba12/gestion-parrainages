@@ -41,18 +41,18 @@
 </head>
 <body>
     <div class="header">
-        <h1>Code d'authentification</h1>
+        <h1>Code de validation</h1>
     </div>
     
     <p>Bonjour {{ prenom }} {{ nom }},</p>
     
-    <p>Vous avez demandé un code d'authentification pour accéder à votre espace parrain. Voici votre code :</p>
+    <p>Vous avez demandé un code de validation pour parrainer. Voici votre code :</p>
     
     <div class="code-box">
         <strong>{{ code }}</strong>
     </div>
     
-    <p>Ce code est valable à partir de {{ date_envoi.strftime('%H:%M') }}.</p>
+    <p>Ce code est valable pendant 2 minutes à partir de {{ date_envoi.strftime('%H:%M') }}.</p>
     
     <p>Si vous n'êtes pas à l'origine de cette demande, veuillez ignorer cet email.</p>
     
