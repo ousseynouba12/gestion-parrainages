@@ -1,33 +1,27 @@
 
-	
-	<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Responsive Login Form HTML CSS | CodingNepal</title>
+
+  
+  <title>Connexion - Admin DGE</title>
   <link rel="stylesheet" type="text/css" href="login.component.css">
-  <!-- Font Awesome CDN link for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
-</head>
-<body>
+
+<div class="lite">
   <div class="wrapper">
     <div class="title"><span>Admin DGE</span></div>
-    <form action="#">
+    <form (ngSubmit)="onLogin()">
       <div class="row">
         <i class="fas fa-user"></i>
-        <input type="text" placeholder="Email or Phone" required />
+        <input type="email" [(ngModel)]="email" name="email" placeholder="Email" required />
       </div>
       <div class="row">
         <i class="fas fa-lock"></i>
-        <input type="password" placeholder="Password" required />
+        <input type="password" [(ngModel)]="password" name="password" placeholder="Mot de passe" required />
       </div>
-      <div class="pass"><a href="#">Forgot password?</a></div>
-      <div class="row button" >
-        <input type="submit" value="Login" />
+      <div class="pass"><a href="#">Mot de passe oublié ?</a></div>
+      <div class="row button">
+        <input type="submit" value="Connexion" />
       </div>
-      <div class="signup-link">Not a member? <a href="">Signup now</a></div>
+      <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
     </form>
   </div>
-</body>
-</html>
+</div>

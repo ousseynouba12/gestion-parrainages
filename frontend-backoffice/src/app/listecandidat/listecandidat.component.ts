@@ -5,10 +5,12 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-listecandidat',
-  imports: [CommonModule,FormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './listecandidat.component.html',
   styleUrl: './listecandidat.component.css'
 })
+
 export class ListecandidatComponent {
  
     candidats = [
@@ -43,8 +45,10 @@ export class ListecandidatComponent {
     selectedCandidat: any = null;
   
     showDetails(candidat: any) {
+      console.log("Candidat sélectionné :", candidat);
       this.selectedCandidat = candidat;
     }
+    
   
     closeDetails() {
       this.selectedCandidat = null;

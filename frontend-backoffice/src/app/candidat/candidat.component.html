@@ -1,12 +1,13 @@
 <div class="container">
     <h2>Enregistrement des Candidats</h2>
-    <label for="carteElecteur">Numéro de Carte d’Électeur</label>
-    <input type="text" [(ngModel)]="carteElecteur" placeholder="Entrez le numéro" required>
-    <p *ngIf="messageErreur" class="error">{{ messageErreur }}</p>
-    <button (click)="verifierCandidat()">Vérifier</button>
-
-    <div *ngIf="formCandidat">
-        <h3>Informations du Candidat</h3>
+    
+        <label for="carteElecteur">Numéro de Carte d’Électeur</label>
+        <input type="text" [(ngModel)]="carteElecteur" placeholder="Entrez le numéro" required>
+        <p *ngIf="messageErreur" class="error">{{ messageErreur }}</p>
+        <button (click)="verifierCandidat()">Vérifier</button>
+      
+        <div *ngIf="formCandidat">
+          <h3>Informations du Candidat</h3>
         <input type="text" [(ngModel)]="nom" placeholder="Nom" disabled>
         <input type="text" [(ngModel)]="prenom" placeholder="Prénom" disabled>
         <input type="date" [(ngModel)]="dateNaissance" disabled>
@@ -20,7 +21,7 @@
         <input type="color" [(ngModel)]="couleur2" title="Deuxième couleur">
         <input type="color" [(ngModel)]="couleur3" title="Troisième couleur">
         <input type="url" [(ngModel)]="urlInfo" placeholder="Lien vers infos">
-        <input type="file" (change)="onFileSelected($event)" accept="image/*">
-        <button (click)="enregistrerCandidat()">Enregistrer </button>
+        <input type="file" accept="image/*">
+        <button >Enregistrer</button>
     </div>
 </div>

@@ -1,18 +1,21 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { CandidatService } from '../services/candidat.service';
 
 @Component({
   selector: 'app-candidat',
-  imports: [CommonModule,FormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './candidat.component.html',
-  styleUrl: './candidat.component.css'
+  styleUrls: ['./candidat.component.css'],
 })
 export class CandidatComponent {
   carteElecteur = '';
   messageErreur = '';
   formCandidat = false;
+
+  // Informations du candidat
   nom = '';
   prenom = '';
   dateNaissance = '';
@@ -26,27 +29,87 @@ export class CandidatComponent {
   urlInfo = '';
   photo: File | null = null;
 
+  constructor(private candidatService: CandidatService) {}
+
+  /**
+   * Vérifie si un candidat existe déjà.
+   */
   verifierCandidat() {
-    if (this.carteElecteur === '123456') {
-      this.messageErreur = '';
-      this.formCandidat = true;
-      this.nom = 'Doe';
-      this.prenom = 'John';
-      this.dateNaissance = '1985-06-15';
-    } else if (this.carteElecteur === '654321') {
-      this.messageErreur = 'Candidat déjà enregistré !';
-      this.formCandidat = false;
-    } else {
-      this.messageErreur = 'Le candidat considéré n’est pas présent dans le fichier électoral.';
-      this.formCandidat = false;
+    if (!this.carteElecteur) {
+      this.messageErreur = 'Veuillez entrer un numéro de carte d\'électeur.';
+      return;
     }
+
+    this.candidatService.verifierCandidat(this.carteElecteur).subscribe({
+      next: (response) => {
+        this.formCandidat = true;
+        this.nom = response.nom;
+        this.prenom = response.prenom;
+        this.dateNaissance = response.dateNaissance;
+        this.messageErreur = '';
+      },
+      error: (error) => {
+        this.messageErreur = 'Aucun candidat trouvé avec ce numéro.';
+        this.formCandidat = false;
+      },
+    });
   }
 
-  onFileSelected(event: any) {
-    this.photo = event.target.files[0];
-  }
-
+  /**
+   * Enregistre un nouveau candidat.
+   */
   enregistrerCandidat() {
-    alert('Candidature enregistrée avec succès ! Un code de sécurité a été envoyé.');
+    const candidat = {
+      numElecteur: this.carteElecteur,
+      nom: this.nom,
+      prenom: this.prenom,
+      dateNaissance: this.dateNaissance,
+      email: this.email,
+      telephone: this.telephone,
+      partiPolitique: this.partiPolitique,
+      slogan: this.slogan,
+      couleurs: [this.couleur1, this.couleur2, this.couleur3],
+      urlInfo: this.urlInfo,
+      photo: this.photo,
+    };
+
+    this.candidatService.enregistrerCandidat(candidat).subscribe({
+      next: (response) => {
+        alert('Candidat enregistré avec succès !');
+        this.resetForm();
+      },
+      error: (error) => {
+        this.messageErreur = 'Erreur lors de l\'enregistrement du candidat.';
+      },
+    });
+  }
+
+  /**
+   * Réinitialise le formulaire.
+   */
+  resetForm() {
+    this.carteElecteur = '';
+    this.nom = '';
+    this.prenom = '';
+    this.dateNaissance = '';
+    this.email = '';
+    this.telephone = '';
+    this.partiPolitique = '';
+    this.slogan = '';
+    this.couleur1 = '';
+    this.couleur2 = '';
+    this.couleur3 = '';
+    this.urlInfo = '';
+    this.photo = null;
+    this.formCandidat = false;
+  }
+
+  /**
+   * Gère l'upload de la photo.
+   */
+  onFileChange(event: any) {
+    if (event.target.files.length > 0) {
+      this.photo = event.target.files[0];
+    }
   }
 }

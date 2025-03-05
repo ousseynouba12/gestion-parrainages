@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { SidebarComponent } from "./layout/sidebar/sidebar.component";
 import { NavbarComponent } from "./layout/navbar/navbar.component";
 
+
 import { ReactiveFormsModule } from '@angular/forms';
 
 
@@ -13,6 +14,9 @@ import { ReactiveFormsModule } from '@angular/forms';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
-  title = 'plateformeDGE';
-}
+
+  
+  export class AppComponent  {
+    title = 'plateformeDGE';
+   
+  }
