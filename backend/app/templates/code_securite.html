@@ -1,0 +1,71 @@
+<!-- app/templates/code_securite.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votre code de sécurité</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #0056b3;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+        }
+        .code {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            margin: 20px 0;
+            letter-spacing: 5px;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Votre code de sécurité</h1>
+    </div>
+    <div class="content">
+        <p>Bonjour {{ prenom }} {{ nom }},</p>
+        
+        <p>Voici votre code de sécurité pour accéder à votre espace candidat pour l'élection :</p>
+        
+        <div class="code">{{ code }}</div>
+        
+        <p>Ce code est valable jusqu'à la génération d'un nouveau code. Il vous sera demandé lors de votre connexion à votre espace candidat.</p>
+        
+        <p>Si vous n'avez pas demandé ce code, veuillez ignorer cet email ou contacter notre support.</p>
+        
+        <p>Cordialement,<br>
+        L'équipe électorale</p>
+    </div>
+    <div class="footer">
+        <p>Cet email a été envoyé le {{ date_envoi.strftime('%d/%m/%Y à %H:%M') }}.</p>
+        <p>Merci de ne pas répondre à cet email qui est généré automatiquement.</p>
+    </div>
+</body>
+</html>

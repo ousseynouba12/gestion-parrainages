@@ -1,0 +1,60 @@
+.dashboard-container {
+  height: 100vh;
+}
+
+.sidenav {
+  width: 250px;
+  background-color: #2C3E50;
+  color: white;
+  padding: 10px;
+}
+
+.brand {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  color: #FFF;
+}
+
+.mat-nav-list a {
+  color: white;
+  text-decoration: none;
+}
+
+.main-content {
+  padding: 20px;
+}
+
+.stats {
+  display: flex;
+  gap: 15px;
+}
+
+.stat-card {
+  flex: 1;
+  padding: 20px;
+  color: white;
+  text-align: center;
+}
+
+.green { background-color: #28a745; }
+.red { background-color: #dc3545; }
+.purple { background-color: #6f42c1; }
+.blue { background-color: #007bff; }
+
+.chart-section {
+  margin-top: 30px;
+}
+
+.links-section {
+  margin-top: 20px;
+}
+
+.link-box {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.link-box input {
+  flex: 1;
+}

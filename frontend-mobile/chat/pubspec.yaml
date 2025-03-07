@@ -1,0 +1,39 @@
+name: chat
+description: "A new Flutter project."
+
+publish_to: 'none' # Ne publie pas ce package sur pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.0.0 # Utilisez une version récente
+  cupertino_icons: ^1.0.8 # Icônes pour iOS
+  csv: ^5.0.2
+  file_picker: ^6.0.0
+  sqflite: ^2.3.0
+  path_provider: ^2.0.15
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0 # Active les linter pour bonnes pratiques
+
+flutter:
+  uses-material-design: true
+
+  # Décommentez et ajoutez des ressources si nécessaire :
+  assets:
+    - assets/Classeur1.csv
+  #   - images/a_dot_ham.jpeg
+
+  # Ajoutez des polices personnalisées si besoin :
+  # fonts:
+  #   - family: CustomFont
+  #     fonts:
+  #       - asset: fonts/CustomFont-Regular.ttf
+  #       - asset: fonts/CustomFont-Bold.ttf
+  #         weight: 700

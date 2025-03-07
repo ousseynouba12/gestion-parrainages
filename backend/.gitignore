@@ -1,0 +1,35 @@
+# Created by venv; see https://docs.python.org/3/library/venv.html
+# 📌 Ignorer l'environnement virtuel
+venv/
+.env
+.env.local
+
+# 📌 Ignorer les fichiers Python compilés
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 📌 Ignorer les logs et fichiers temporaires
+logs/
+*.log
+*.out
+*.err
+debug.log
+
+# 📌 Ignorer les fichiers liés à Alembic
+alembic/versions/
+alembic.ini
+
+# 📌 Ignorer les bases de données locales SQLite (si utilisées)
+*.sqlite3
+*.db
+
+# 📌 Ignorer les fichiers système inutiles (Mac & Windows)
+.DS_Store
+Thumbs.db
+
+# 📌 Ignorer les fichiers générés par l'IDE (VS Code, PyCharm, etc.)
+.vscode/
+.idea/
+*.iml
+

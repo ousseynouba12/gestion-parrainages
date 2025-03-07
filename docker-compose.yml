@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=mysql+pymysql://root:zMjDQSJrIfdTgCvHEXEyRQKWLDxdNJJc@junction.proxy.rlwy.net:16519/railway
