@@ -20,7 +20,7 @@ export class CandidatService {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`,
     });
 
-    return this.http.get(`${this.apiUrl}/candidats/${numElecteur}`, { headers });
+    return this.http.get(`${this.apiUrl}/electeurs/${numElecteur}`, { headers });
   }
 
   /**

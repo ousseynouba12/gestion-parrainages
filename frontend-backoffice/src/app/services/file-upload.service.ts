@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root', // Le service est disponible dans toute l'application
 })
 export class FileUploadService {
-  private apiUrl = 'https://gestion-parrainages.onrender.com'; // Remplacez par l'URL de votre API
+  private apiUrl = 'https://gestion-parrainages.onrender.com/api/v1'; // Remplacez par l'URL de votre API
 
   constructor(private http: HttpClient) {}
 
@@ -20,7 +20,7 @@ export class FileUploadService {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`,
     });
 
-    return this.http.get(`${this.apiUrl}/statut-upload`, { headers });
+    return this.http.get(`${this.apiUrl}/electoral/statut-upload`, { headers });
   }
 
   /**
@@ -41,6 +41,6 @@ export class FileUploadService {
     });
 
     // Envoyez la requête POST à l'API
-    return this.http.post(`${this.apiUrl}/upload-fichier-electoral`, formData, { headers });
+    return this.http.post(`${this.apiUrl}/electoral/upload-fichier-electoral`, formData, { headers });
   }
 }

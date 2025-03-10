@@ -1,6 +1,6 @@
 <div class="container mt-5">
     <h2 class="text-center">Configuration des Parrainages</h2>
-    
+
     <div class="mb-3">
         <label for="startDate" class="form-label">Date de début :</label>
         <input type="date" id="startDate" class="form-control" [(ngModel)]="startDate" (change)="validateDates()">
@@ -16,4 +16,11 @@
     <button class="btn btn-success w-100" [disabled]="!isValid" (click)="saveDates()">Enregistrer</button>
 
     <p *ngIf="successMessage" class="text-success mt-3">{{ successMessage }}</p>
+
+    <h3 class="mt-5">Périodes de Parrainage</h3>
+    <ul class="list-group">
+        <li *ngFor="let periode of periodes" class="list-group-item">
+            <strong>Début:</strong> {{ periode.date_debut }} | <strong>Fin:</strong> {{ periode.date_fin }}
+        </li>
+    </ul>
 </div>

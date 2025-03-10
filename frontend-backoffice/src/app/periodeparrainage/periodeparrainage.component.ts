@@ -1,25 +1,46 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-periodeparrainage',
-  imports: [CommonModule,FormsModule],
+  imports : [FormsModule,CommonModule],
   templateUrl: './periodeparrainage.component.html',
-  styleUrl: './periodeparrainage.component.css'
+  styleUrls: ['./periodeparrainage.component.css']
 })
-export class PeriodeparrainageComponent {
+export class PeriodeparrainageComponent implements OnInit {
   startDate: string = '';
   endDate: string = '';
   startError: string = '';
   endError: string = '';
   isValid: boolean = false;
   successMessage: string = '';
+  periodes: any[] = [];
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit() {
+    this.getPeriodes();
+  }
+
+  getPeriodes() {
+    this.http.get<any[]>('https://gestion-parrainages.onrender.com/api/v1/periodes/')
+      .subscribe(
+        (data) => {
+          this.periodes = data;
+          console.log('Périodes récupérées :', data);
+        },
+        (error) => {
+          console.error('Erreur lors de la récupération des périodes', error);
+        }
+      );
+  }
 
   validateDates() {
     const today = new Date();
     const minStartDate = new Date();
-    minStartDate.setMonth(today.getMonth() + 6); // 6 mois après aujourd'hui
+    minStartDate.setMonth(today.getMonth() + 6);
 
     const start = new Date(this.startDate);
     const end = new Date(this.endDate);

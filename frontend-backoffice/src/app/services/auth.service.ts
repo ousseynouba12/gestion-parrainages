@@ -1,33 +1,28 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root', // Le service est disponible dans toute l'application
+  providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://gestion-parrainages.onrender.com/api/v1';
-
+  private apiUrl = 'https://gestion-parrainages.onrender.com/api/v1/auth/login';
+  
   constructor(private http: HttpClient) {}
-
-  // Méthode pour se connecter
+  
   login(email: string, password: string): Observable<any> {
-    const body = { username: email, password: password };
-    return this.http.post(`${this.apiUrl}/auth/login`, body).pipe(
-      tap((response: any) => {
-        // Stocker le token dans le localStorage
-        //localStorage.setItem('token', response.access_token);
-      })
+    // Créer des paramètres de formulaire (form data)
+    const params = new HttpParams()
+      .set('username', email)  // Utiliser 'username' au lieu de 'email'
+      .set('password', password);
+      
+    // Définir les en-têtes pour form-urlencoded
+    const headers = new HttpHeaders().set(
+      'Content-Type', 
+      'application/x-www-form-urlencoded'
     );
-  }
-
-  // Méthode pour se déconnecter
-  logout() {
-    localStorage.removeItem('token');
-  }
-
-  // Méthode pour récupérer le token
-  getToken(): string | null {
-    return localStorage.getItem('token');
+    
+    // Envoyer sous forme de form-urlencoded
+    return this.http.post<any>(this.apiUrl, params.toString(), { headers });
   }
 }
