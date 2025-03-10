@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from app.api.v1.endpoints import (
     auth,
     membre_dge,
-    #electeur,
+    electeur,
     candidat,
     parrain,
     parrainage,
@@ -18,7 +18,7 @@ router = APIRouter()
 
 router.include_router(auth.router, prefix="/auth", tags=["Authentification"])
 router.include_router(membre_dge.router, prefix="/membres", tags=["Membres DGE"])
-#router.include_router(electeur.router, prefix="/electeurs", tags=["Électeurs"])
+router.include_router(electeur.router, prefix="/electeurs", tags=["Électeurs"])
 router.include_router(candidat.router, prefix="/candidats", tags=["Candidats"])
 router.include_router(parrain.router, prefix="/parrain", tags=["Parrain"])
 router.include_router(parrainage.router, prefix="/parrainages", tags=["Parrainages"])
