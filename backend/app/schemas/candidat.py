@@ -1,9 +1,12 @@
 from pydantic import BaseModel, EmailStr
-from datetime import datetime
+from datetime import datetime, date
 from typing import Optional
 
 class CandidatBase(BaseModel):
     numElecteur: str
+    nom: Optional[str]=None
+    prenom: Optional[str]=None
+    dateNaissance: Optional[date]=None
     email: EmailStr
     telephone: str
     partiPolitique: Optional[str] = None

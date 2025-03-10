@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session,joinedload
 from datetime import datetime
 from typing import List
 from app.core.database import get_db
@@ -56,18 +56,26 @@ def get_all_candidats(db: Session = Depends(get_db)):
 @router.get("/{numElecteur}", response_model=CandidatBase)
 def get_candidat(numElecteur: str, db: Session = Depends(get_db)):
     """Récupère un candidat avec son dernier code de sécurité actif"""
-    candidat = db.query(Candidat).filter(Candidat.numElecteur == numElecteur).first()
-    if not candidat:
+    # Charger les données de l'électeur en une seule requête
+    candidat = db.query(Candidat)\
+        .options(joinedload(Candidat.electeur))\
+        .filter(Candidat.numElecteur == numElecteur)\
+        .first()
+
+    if not candidat or not candidat.electeur:
         raise HTTPException(status_code=404, detail="Candidat non trouvé.")
-    
+
     # Récupérer le dernier code actif
     code_actif = code_generator_service.get_active_code(db, numElecteur)
     
+    # Construire la réponse avec toutes les données
     return {
         **candidat.__dict__,
+        "nom": candidat.electeur.nom,
+        "prenom": candidat.electeur.prenom,
+        "dateNaissance": candidat.electeur.dateNaissance,
         "codeSecu": code_actif.code if code_actif else None
     }
-
 # ------------------------- METTRE À JOUR UN CANDIDAT -------------------------
 @router.put("/{numElecteur}", response_model=CandidatOut)
 def update_candidat(numElecteur: str, candidat_update: CandidatUpdate, db: Session = Depends(get_db)):
