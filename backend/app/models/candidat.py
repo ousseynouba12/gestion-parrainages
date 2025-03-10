@@ -20,7 +20,6 @@ class Candidat(Base):
     nbrParrainages = Column(Integer, default=0)
     dateCreation = Column(DateTime, nullable=False, default=datetime.utcnow)
     dateDerniereModification = Column(DateTime, onupdate=datetime.utcnow)
-    
     # Relation avec Electeur
     electeur = relationship("Electeur", back_populates="candidat")
     
