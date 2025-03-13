@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CandidatService } from '../services/candidat.service';
+import { CandidatService, Candidat } from '../services/candidat.service';
 
 @Component({
   selector: 'app-candidat',
@@ -13,7 +13,10 @@ import { CandidatService } from '../services/candidat.service';
 export class CandidatComponent {
   carteElecteur = '';
   messageErreur = '';
+  messageSucces = '';
   formCandidat = false;
+  etapeCreation = 'verification'; // 'verification', 'creation', 'confirmation'
+  codeSecurite = '';
 
   // Informations du candidat
   nom = '';
@@ -21,20 +24,24 @@ export class CandidatComponent {
   dateNaissance = '';
   email = '';
   telephone = '';
-  partiPolitique = '';
+  partiPolitique = '';          // Renommé pour correspondre à l'API
+  profession = '';
   slogan = '';
-  couleur1 = '';
-  couleur2 = '';
-  couleur3 = '';
+  couleur1 = '#ffffff';
+  couleur2 = '#ffffff';
+  couleur3 = '#ffffff';
   urlInfo = '';
-  photo: File | null = null;
+  photo = '';
 
   constructor(private candidatService: CandidatService) {}
 
   /**
-   * Vérifie si un candidat existe déjà.
+   * Vérifie si un électeur existe.
    */
   verifierCandidat() {
+    this.messageErreur = '';
+    this.messageSucces = '';
+    
     if (!this.carteElecteur) {
       this.messageErreur = 'Veuillez entrer un numéro de carte d\'électeur.';
       return;
@@ -43,13 +50,20 @@ export class CandidatComponent {
     this.candidatService.verifierCandidat(this.carteElecteur).subscribe({
       next: (response) => {
         this.formCandidat = true;
-        this.nom = response.nom;
-        this.prenom = response.prenom;
-        this.dateNaissance = response.dateNaissance;
-        this.messageErreur = '';
+        this.etapeCreation = 'creation';
+        this.nom = response.nom || '';
+        this.prenom = response.prenom || '';
+        this.dateNaissance = response.dateNaissance || '';
       },
       error: (error) => {
-        this.messageErreur = 'Aucun candidat trouvé avec ce numéro.';
+        console.error('Erreur lors de la vérification:', error);
+        if (error.status === 404) {
+          this.messageErreur = 'Aucun électeur trouvé avec ce numéro.';
+        } else if (error.status === 409) {
+          this.messageErreur = 'Un candidat existe déjà avec ce numéro d\'électeur.';
+        } else {
+          this.messageErreur = 'Une erreur est survenue. Veuillez réessayer.';
+        }
         this.formCandidat = false;
       },
     });
@@ -59,27 +73,67 @@ export class CandidatComponent {
    * Enregistre un nouveau candidat.
    */
   enregistrerCandidat() {
-    const candidat = {
+    this.messageErreur = '';
+    
+    // Validation basique
+    if (!this.email || !this.telephone) {
+      this.messageErreur = 'Veuillez remplir tous les champs obligatoires.';
+      return;
+    }
+
+    const candidat: Candidat = {
       numElecteur: this.carteElecteur,
-      nom: this.nom,
-      prenom: this.prenom,
-      dateNaissance: this.dateNaissance,
       email: this.email,
       telephone: this.telephone,
       partiPolitique: this.partiPolitique,
-      slogan: this.slogan,
-      couleurs: [this.couleur1, this.couleur2, this.couleur3],
-      urlInfo: this.urlInfo,
-      photo: this.photo,
+      
     };
 
     this.candidatService.enregistrerCandidat(candidat).subscribe({
       next: (response) => {
-        alert('Candidat enregistré avec succès !');
-        this.resetForm();
+        console.log('Candidat enregistré:', response);
+        this.codeSecurite = response.codeSecurite;
+        this.etapeCreation = 'confirmation';
+        this.messageSucces = 'Candidat enregistré avec succès !';
+        
+        // Mise à jour des informations additionnelles si nécessaire
+        if (this.slogan || this.couleur1 !== '#ffffff' || this.urlInfo) {
+          const updateData = {
+            email: this.email,
+            telephone: this.telephone,
+            parti: this.partiPolitique,
+            profession: this.profession,
+            // Données additionnelles non mentionnées dans l'API mais possiblement supportées
+            slogan: this.slogan,
+            couleur1: this.couleur1,
+            couleur2: this.couleur2,
+            couleur3: this.couleur3,
+            urlInfo: this.urlInfo
+          };
+          
+          this.candidatService.updateCandidat(this.carteElecteur, updateData).subscribe({
+            next: (updateResponse) => {
+              console.log('Candidat mis à jour:', updateResponse);
+            },
+            error: (updateError) => {
+              console.error('Erreur lors de la mise à jour:', updateError);
+              // On ne bloque pas le processus si cette mise à jour échoue
+            }
+          });
+        }
+        
+        // Upload de la photo si présente
+        
       },
       error: (error) => {
-        this.messageErreur = 'Erreur lors de l\'enregistrement du candidat.';
+        console.error('Erreur lors de l\'enregistrement:', error);
+        if (error.status === 400) {
+          this.messageErreur = 'Données invalides. Veuillez vérifier les informations saisies.';
+        } else if (error.status === 409) {
+          this.messageErreur = 'Un candidat existe déjà avec ce numéro d\'électeur.';
+        } else {
+          this.messageErreur = 'Erreur lors de l\'enregistrement du candidat.';
+        }
       },
     });
   }
@@ -95,21 +149,17 @@ export class CandidatComponent {
     this.email = '';
     this.telephone = '';
     this.partiPolitique = '';
+    this.profession = '';
     this.slogan = '';
-    this.couleur1 = '';
-    this.couleur2 = '';
-    this.couleur3 = '';
+    this.couleur1 = '#ffffff';
+    this.couleur2 = '#ffffff';
+    this.couleur3 = '#ffffff';
     this.urlInfo = '';
-    this.photo = null;
+    this.photo = '';
     this.formCandidat = false;
+    this.etapeCreation = 'verification';
+    this.messageErreur = '';
+    this.messageSucces = '';
   }
 
-  /**
-   * Gère l'upload de la photo.
-   */
-  onFileChange(event: any) {
-    if (event.target.files.length > 0) {
-      this.photo = event.target.files[0];
-    }
-  }
 }

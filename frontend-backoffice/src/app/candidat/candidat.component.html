@@ -1,27 +1,78 @@
 <div class="container">
-    <h2>Enregistrement des Candidats</h2>
+  <h2>Enregistrement des Candidats</h2>
+  
+  <!-- Étape de vérification -->
+  <div *ngIf="etapeCreation === 'verification'">
+      <label for="carteElecteur">Numéro de Carte d'Électeur</label>
+      <input type="text" id="carteElecteur" [(ngModel)]="carteElecteur" placeholder="Entrez le numéro" required>
+      <p *ngIf="messageErreur" class="error">{{ messageErreur }}</p>
+      <button (click)="verifierCandidat()">Vérifier</button>
+  </div>
     
-        <label for="carteElecteur">Numéro de Carte d’Électeur</label>
-        <input type="text" [(ngModel)]="carteElecteur" placeholder="Entrez le numéro" required>
-        <p *ngIf="messageErreur" class="error">{{ messageErreur }}</p>
-        <button (click)="verifierCandidat()">Vérifier</button>
+  <!-- Étape de création -->
+  <div *ngIf="etapeCreation === 'creation'">
+      <h3>Informations de l'Électeur</h3>
+      <div class="form-group">
+          <label>Nom</label>
+          <input type="text" [(ngModel)]="nom" placeholder="Nom" disabled>
+      </div>
+      <div class="form-group">
+          <label>Prénom</label>
+          <input type="text" [(ngModel)]="prenom" placeholder="Prénom" disabled>
+      </div>
+      <div class="form-group">
+          <label>Date de naissance</label>
+          <input type="date" [(ngModel)]="dateNaissance" disabled>
+      </div>
       
-        <div *ngIf="formCandidat">
-          <h3>Informations du Candidat</h3>
-        <input type="text" [(ngModel)]="nom" placeholder="Nom" disabled>
-        <input type="text" [(ngModel)]="prenom" placeholder="Prénom" disabled>
-        <input type="date" [(ngModel)]="dateNaissance" disabled>
-        
-        <h3>Informations Complémentaires</h3>
-        <input type="email" [(ngModel)]="email" placeholder="Email" required>
-        <input type="tel" [(ngModel)]="telephone" placeholder="Numéro de Téléphone" required>
-        <input type="text" [(ngModel)]="partiPolitique" placeholder="Nom du Parti (optionnel)">
-        <input type="text" [(ngModel)]="slogan" placeholder="Slogan du candidat">
-        <input type="color" [(ngModel)]="couleur1" title="Première couleur">
-        <input type="color" [(ngModel)]="couleur2" title="Deuxième couleur">
-        <input type="color" [(ngModel)]="couleur3" title="Troisième couleur">
-        <input type="url" [(ngModel)]="urlInfo" placeholder="Lien vers infos">
-        <input type="file" accept="image/*">
-        <button (click)="enregistrerCandidat()" >Enregistrer</button>
-    </div>
+      <h3>Informations Candidat</h3>
+      <div class="form-group">
+          <label>Email *</label>
+          <input type="email" [(ngModel)]="email" placeholder="Email" required>
+      </div>
+      <div class="form-group">
+          <label>Téléphone *</label>
+          <input type="tel" [(ngModel)]="telephone" placeholder="Numéro de Téléphone" required>
+      </div>
+      <div class="form-group">
+          <label>Parti Politique</label>
+          <input type="text" [(ngModel)]="partiPolitique" placeholder="Parti Politique">
+      </div>
+      
+      
+      <h3>Informations Complémentaires</h3>
+      <div class="form-group">
+          <label>Slogan</label>
+          <input type="text" [(ngModel)]="slogan" placeholder="Slogan du candidat">
+      </div>
+      <div class="form-group colors">
+          <label>Couleurs</label>
+          <input type="color" [(ngModel)]="couleur1" title="Première couleur">
+          <input type="color" [(ngModel)]="couleur2" title="Deuxième couleur">
+          <input type="color" [(ngModel)]="couleur3" title="Troisième couleur">
+      </div>
+      <div class="form-group">
+          <label>Url info</label>
+          <input type="url" [(ngModel)]="urlInfo" placeholder="Lien vers informations">
+      </div>
+      <div class="form-group">
+          <label>Photo de profil</label>
+          <input type="url" [(ngModel)]="photo" placeholder="Lien vers informations">
+      </div>
+      
+      <div class="actions">
+          <button (click)="resetForm()" class="btn-secondary">Annuler</button>
+          <button (click)="enregistrerCandidat()" class="btn-primary">Enregistrer</button>
+      </div>
+  </div>
+  
+  <!-- Étape de confirmation -->
+  <div *ngIf="etapeCreation === 'confirmation'" class="confirmation">
+      <div class="success-message">
+          <h3>{{ messageSucces }}</h3>
+          <p>Code de sécurité du candidat : <strong>{{ codeSecurite }}</strong></p>
+          <p class="important">Veuillez conserver ce code précieusement. Il sera nécessaire pour l'authentification.</p>
+      </div>
+      <button (click)="resetForm()" class="btn-primary">Enregistrer un nouveau candidat</button>
+  </div>
 </div>

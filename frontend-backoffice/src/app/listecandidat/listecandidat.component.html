@@ -3,49 +3,91 @@
         <h1>Liste des Candidats Enregistrés</h1>
     </header>
 
+    <!-- Messages d'état -->
+    <div *ngIf="loading" class="loading-message">
+        Chargement en cours...
+    </div>
+    <div *ngIf="error" class="error-message">
+        {{ error }}
+    </div>
+    <div *ngIf="success" class="success-message">
+        {{ success }}
+    </div>
+
     <!-- Tableau des candidats -->
     <section class="candidate-list">
-        <table>
+        <table *ngIf="candidats.length > 0">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Nom</th>
-                    <th>Prénom</th>
-                    <th>Date de Naissance</th>
+                    <th>Numéro Électeur</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
                     <th>Parti Politique</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let candidat of candidats">
-                    <td>{{ candidat.id }}</td>
-                    <td>{{ candidat.nom }}</td>
-                    <td>{{ candidat.prenom }}</td>
-                    <td>{{ candidat.naissance }}</td>
-                    <td>{{ candidat.parti }}</td>
+                    <td>{{ candidat.numElecteur }}</td>
+                    <td>{{ candidat.email }}</td>
+                    <td>{{ candidat.telephone }}</td>
+                    <td>{{ candidat.partiPolitique }}</td>
                     <td>
-                        <button (onclick)="showDetails(candidat)">Voir Détails</button>
+                        <button (click)="showDetails(candidat.numElecteur)" class="btn-details">Voir Détails</button>
                     </td>
                 </tr>
             </tbody>
         </table>
+        <div *ngIf="candidats.length === 0 && !loading" class="no-data">
+            Aucun candidat enregistré
+        </div>
     </section>
 
     <!-- Détails du candidat -->
-    <div *ngIf="selectedCandidat" class="candidate-details">
-        <h2>Détails de la Candidature</h2>
-        <p><strong>Nom:</strong> {{ selectedCandidat.nom }}</p>
-        <p><strong>Prénom:</strong> {{ selectedCandidat.prenom }}</p>
-        <p><strong>Date de Naissance:</strong> {{ selectedCandidat.naissance }}</p>
+    <div *ngIf="selectedCandidat && !isEditing" class="candidate-details">
+        <h2>Détails du Candidat</h2>
+        <p><strong>Numéro Électeur:</strong> {{ selectedCandidat.numElecteur }}</p>
         <p><strong>Email:</strong> {{ selectedCandidat.email }}</p>
         <p><strong>Téléphone:</strong> {{ selectedCandidat.telephone }}</p>
-        <p><strong>Parti Politique:</strong> {{ selectedCandidat.parti }}</p>
-        <p><strong>Slogan:</strong> {{ selectedCandidat.slogan }}</p>
-        <p><strong>Photo:</strong> <img [src]="selectedCandidat.photo" alt="Photo de {{ selectedCandidat.nom }}" width="100"></p>
-        <p><strong>Couleurs du Parti:</strong> {{ selectedCandidat.couleurs.join(", ") }}</p>
-        <p><strong>Informations supplémentaires:</strong> 
-            <a [href]="selectedCandidat.url" target="_blank">{{ selectedCandidat.url }}</a>
-        </p>
-        <button (click)="closeDetails()">Fermer</button>
+        <p><strong>Parti Politique:</strong> {{ selectedCandidat.partiPolitique }}</p>
+        <p><strong>Code de Sécurité:</strong> {{ selectedCandidat.codeSecurite }}</p>
+        <p><strong>Date de Création:</strong> {{ selectedCandidat.dateCreation | date:'dd/MM/yyyy HH:mm' }}</p>
+        
+        <div class="actions">
+            <button (click)="startEditing()" class="btn-edit">Modifier</button>
+            <button (click)="deleteCandidat(selectedCandidat.numElecteur)" class="btn-delete">Supprimer</button>
+            <button (click)="genererNouveauCode(selectedCandidat.numElecteur)" class="btn-code">Générer Nouveau Code</button>
+            <button (click)="closeDetails()" class="btn-close">Fermer</button>
+        </div>
+    </div>
+
+    <!-- Formulaire d'édition -->
+    <div *ngIf="selectedCandidat && isEditing" class="candidate-edit">
+        <h2>Modifier le Candidat</h2>
+        <form [formGroup]="editForm" (ngSubmit)="saveCandidat()">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" formControlName="email" class="form-control">
+                <div *ngIf="editForm.get('email')?.invalid && editForm.get('email')?.touched" class="error-text">
+                    Email invalide
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="telephone">Téléphone:</label>
+                <input type="tel" id="telephone" formControlName="telephone" class="form-control">
+                <div *ngIf="editForm.get('telephone')?.invalid && editForm.get('telephone')?.touched" class="error-text">
+                    Téléphone requis
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="parti">Parti Politique:</label>
+                <input type="text" id="parti" formControlName="parti" class="form-control">
+            </div>
+           
+            <div class="form-actions">
+                <button type="submit" [disabled]="editForm.invalid" class="btn-save">Enregistrer</button>
+                <button type="button" (click)="cancelEditing()" class="btn-cancel">Annuler</button>
+            </div>
+        </form>
     </div>
 </div>

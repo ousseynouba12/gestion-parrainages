@@ -1,25 +1,117 @@
 <div class="container">
-    <h2>Importation du fichier électoral</h2>
+  <h2>Importation du fichier électoral</h2>
   
-    <form [formGroup]="uploadForm" (ngSubmit)="submitForm()">
-      <!-- Champ pour l'empreinte SHA256 -->
+  <!-- Formulaire d'importation -->
+  <form [formGroup]="uploadForm" (ngSubmit)="submitForm()" *ngIf="!isUploadComplete">
+    <!-- Champ pour l'empreinte SHA256 -->
+    <div class="form-group">
       <label for="checksum">Empreinte CHECKSUM (SHA256) :</label>
       <input type="text" id="checksum" formControlName="checksum" placeholder="Entrer la valeur SHA256" required>
       <div *ngIf="uploadForm.get('checksum')?.invalid && uploadForm.get('checksum')?.touched" class="error">
         L'empreinte SHA256 doit contenir 64 caractères.
       </div>
-  
-      <!-- Champ pour uploader le fichier -->
+    </div>
+    
+    <!-- Champ pour uploader le fichier -->
+    <div class="form-group">
       <label for="file">Fichier CSV :</label>
       <input type="file" id="file" (change)="onFileChange($event)" accept=".csv" required>
       <div *ngIf="uploadForm.get('file')?.invalid && uploadForm.get('file')?.touched" class="error">
         Veuillez sélectionner un fichier CSV.
       </div>
+    </div>
+    
+    <!-- Bouton d'importation -->
+    <button type="submit" [disabled]="uploadForm.invalid || isUploading">
+      <span *ngIf="isUploading">Importation en cours...</span>
+      <span *ngIf="!isUploading">Importer</span>
+    </button>
+  </form>
   
-      <!-- Bouton d'importation -->
-      <button type="submit" [disabled]="uploadForm.invalid">Importer</button>
-  
-      <!-- Message d'état -->
-      <p [ngClass]="messageClass">{{ message }}</p>
-    </form>
+  <!-- Affichage des résultats du contrôle -->
+  <div *ngIf="isUploadComplete && statistiques" class="results-container">
+    <h3>Résultats du contrôle</h3>
+    
+    <div class="stats-card">
+      <div class="stat-item">
+        <span class="stat-label">Total des électeurs :</span>
+        <span class="stat-value">{{ statistiques.statistiques.nbElecteursTotal }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Électeurs valides :</span>
+        <span class="stat-value success">{{ statistiques.statistiques.nbElecteursValides }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Électeurs invalides :</span>
+        <span class="stat-value error">{{ statistiques.statistiques.nbElecteursInvalides }}</span>
+      </div>
+    </div>
+    
+    <!-- Types d'erreurs -->
+    <div *ngIf="statistiques.statistiques.nbElecteursInvalides > 0" class="error-types">
+      <h4>Types d'erreurs :</h4>
+      <ul>
+        <li *ngFor="let type of typesErreurs">
+          {{ type }}: {{ statistiques.statistiques.typesErreurs[type] }} électeurs
+          <button (click)="filtrerParTypeErreur(type)" class="btn-link">Afficher</button>
+        </li>
+      </ul>
+    </div>
+    
+    <!-- Liste des électeurs problématiques -->
+    <div *ngIf="electeursProblematiques.length > 0" class="electeurs-problematiques">
+      <h4>
+        Électeurs problématiques
+        <span *ngIf="filtreTypeErreur"> (Type: {{ filtreTypeErreur }})</span>
+        <button *ngIf="filtreTypeErreur" (click)="filtrerParTypeErreur('')" class="btn-link">Effacer le filtre</button>
+      </h4>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>N° Électeur</th>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Erreurs</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let electeur of electeursProblematiques">
+            <td>{{ electeur.numElecteur }}</td>
+            <td>{{ electeur.nom }}</td>
+            <td>{{ electeur.prenom }}</td>
+            <td>
+              <ul class="error-list">
+                <li *ngFor="let erreur of electeur.erreurs">{{ erreur }}</li>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Boutons d'action -->
+    <div class="actions">
+      <button (click)="validerImportation()" 
+              [disabled]="!peutValider || isValidating" 
+              [class.btn-success]="peutValider" 
+              [class.btn-disabled]="!peutValider">
+        <span *ngIf="isValidating">Validation en cours...</span>
+        <span *ngIf="!isValidating">Valider l'importation</span>
+      </button>
+      
+      <button (click)="resetForm()" class="btn-secondary">
+        Annuler
+      </button>
+      
+      <button (click)="reinitialiserEtatUpload()" class="btn-warning">
+        Réinitialiser l'état d'upload (Admin)
+      </button>
+    </div>
   </div>
+  
+  <!-- Message d'état -->
+  <div [ngClass]="['message', messageClass]" *ngIf="message">
+    {{ message }}
+  </div>
+</div>
