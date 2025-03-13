@@ -47,7 +47,7 @@ def create_candidat(candidat: CandidatCreate, db: Session = Depends(get_db)):
     return db_candidat
 
 # ------------------------- OBTENIR TOUS LES CANDIDATS -------------------------
-@router.get("/", response_model=List[CandidatList])
+@router.get("/", response_model=List[CandidatBase])
 def get_all_candidats(db: Session = Depends(get_db)):
     """Retourne la liste de tous les candidats"""
     return db.query(Candidat).all()
