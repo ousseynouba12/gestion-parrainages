@@ -10,7 +10,14 @@ app = FastAPI(
     description="API pour la gestion des parrainages aux élections présidentielles au Sénégal.",
     version="1.0.0"
 )
-setup_middlewares(app)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify allowed origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # Inclusion des routes
 app.include_router(api_router, prefix="/api/v1")
