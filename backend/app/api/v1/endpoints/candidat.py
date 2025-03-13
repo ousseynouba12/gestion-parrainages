@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import List
 from app.core.database import get_db
 from app.models.candidat import Candidat
+from app.models.electeur import Electeur
 from app.models.code_securite_candidat import CodeSecuriteCandidat
 from app.schemas.candidat import CandidatCreate, CandidatOut, CandidatUpdate, CandidatList, CandidatBase
 from app.schemas.code_securite_candidat import CodeSecuriteCandidatOut
@@ -49,9 +50,30 @@ def create_candidat(candidat: CandidatCreate, db: Session = Depends(get_db)):
 # ------------------------- OBTENIR TOUS LES CANDIDATS -------------------------
 @router.get("/", response_model=List[CandidatBase])
 def get_all_candidats(db: Session = Depends(get_db)):
-    """Retourne la liste de tous les candidats"""
-    return db.query(Candidat).all()
-
+    """Retourne la liste de tous les candidats avec leurs informations d'électeur"""
+    candidats = db.query(Candidat).join(Electeur).all()
+    result = []
+    
+    for candidat in candidats:
+        # Création d'un dictionnaire avec les données combinées
+        candidat_data = {
+            "numElecteur": candidat.numElecteur,
+            "nom": candidat.electeur.nom if candidat.electeur else None,
+            "prenom": candidat.electeur.prenom if candidat.electeur else None,
+            "dateNaissance": candidat.electeur.dateNaissance if candidat.electeur else None,
+            "email": candidat.email,
+            "telephone": candidat.telephone,
+            "partiPolitique": candidat.partiPolitique,
+            "slogan": candidat.slogan,
+            "photo": candidat.photo,
+            "couleur1": candidat.couleur1,
+            "couleur2": candidat.couleur2,
+            "couleur3": candidat.couleur3,
+            "urlInfo": candidat.urlInfo,
+            "nbrParrainages": candidat.nbrParrainages
+        }
+        result.append(candidat_data)
+    return result
 # ------------------------- OBTENIR UN CANDIDAT -------------------------
 @router.get("/{numElecteur}", response_model=CandidatBase)
 def get_candidat(numElecteur: str, db: Session = Depends(get_db)):
