@@ -6,16 +6,29 @@ import { CandidatComponent } from './candidat/candidat.component';
 import { FichierelectoralComponent} from './fichierelectoral/fichierelectoral.component';
 import { SuiviparrainageComponent } from './suiviparrainage/suiviparrainage.component';
 import { ListecandidatComponent} from './listecandidat/listecandidat.component';
+import { authGuard } from './services/auth.guard';
 
 export const routes: Routes = [ 
-    { path: '', redirectTo: '/login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
-    { path: 'dashboard', component: DashboardComponent },
-    { path: 'periodeparrainage', component: PeriodeparrainageComponent },
-    { path: 'candidat', component: CandidatComponent },
-    { path: 'fichierelectoral', component: FichierelectoralComponent },
-    { path: 'suiviparrainage', component: SuiviparrainageComponent },
-    { path: 'listecandidat', component: ListecandidatComponent },
+    { 
+        path: '', 
+        canActivate: [authGuard],
+        children: [
+          { path: 'dashboard', component: DashboardComponent },
+          { path: 'candidat', component: CandidatComponent },
+          { path: 'listecandidat', component: ListecandidatComponent },
+          { path: 'periodeparrainage', component: PeriodeparrainageComponent },
+          { path: 'fichierelectoral', component: FichierelectoralComponent },
+          { path: 'suiviparrainage', component: SuiviparrainageComponent },
+          { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+        ]
+      },
+      // Redirection vers la page de connexion pour les routes non trouvées
+      { path: '**', redirectTo: '/login' },  
+
+    // Redirection vers la page de connexion par défaut
+    { path: '', redirectTo: '/login', pathMatch: 'full' },
+   
 
 ];
 

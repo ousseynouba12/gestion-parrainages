@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FileUploadService, ControlResponse, ElecteurProblematique } from '../services/file-upload.service';
 
@@ -48,9 +47,6 @@ export class FichierelectoralComponent implements OnInit {
     this.checkUploadStatus();
   }
 
-  /**
-   * Vérifie si un upload est autorisé
-   */
   checkUploadStatus(): void {
     this.fileUploadService.checkUploadStatus().subscribe({
       next: (response) => {
@@ -68,9 +64,6 @@ export class FichierelectoralComponent implements OnInit {
     });
   }
 
-  /**
-   * Gère le changement de fichier
-   */
   onFileChange(event: any): void {
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
@@ -78,9 +71,6 @@ export class FichierelectoralComponent implements OnInit {
     }
   }
 
-  /**
-   * Soumet le formulaire d'upload
-   */
   submitForm(): void {
     if (this.uploadForm.invalid) {
       this.message = 'Veuillez remplir tous les champs correctement.';
@@ -95,11 +85,9 @@ export class FichierelectoralComponent implements OnInit {
     this.messageClass = 'info';
     this.isUploading = true;
 
-    // Vérifier si l'upload est autorisé avant de procéder
     this.fileUploadService.checkUploadStatus().subscribe({
       next: (statusResponse) => {
         if (statusResponse.upload_autorise) {
-          // Upload du fichier électoral
           this.fileUploadService.uploadElectoralFile(file, checksum).subscribe({
             next: (uploadResponse) => {
               this.message = 'Fichier téléchargé avec succès. Analyse en cours...';
@@ -108,7 +96,6 @@ export class FichierelectoralComponent implements OnInit {
               this.isUploadComplete = true;
               this.tentativeId = uploadResponse.tentative_id;
               
-              // Lancer automatiquement le contrôle des électeurs
               this.controlerElecteurs();
             },
             error: (uploadError) => {
@@ -129,9 +116,6 @@ export class FichierelectoralComponent implements OnInit {
     });
   }
 
-  /**
-   * Lance le contrôle des électeurs
-   */
   controlerElecteurs(): void {
     if (!this.tentativeId) {
       this.message = 'Identifiant de tentative manquant.';
@@ -153,10 +137,8 @@ export class FichierelectoralComponent implements OnInit {
           this.message = `Contrôle terminé : ${response.statistiques.nbElecteursValides} électeurs valides sur ${response.statistiques.nbElecteursTotal}.`;
           this.messageClass = response.peut_valider ? 'success' : 'warning';
           
-          // Extraire les types d'erreurs pour le filtrage
           this.typesErreurs = Object.keys(response.statistiques.typesErreurs);
           
-          // Si des erreurs existent, charger les électeurs problématiques
           if (response.statistiques.nbElecteursInvalides > 0) {
             this.chargerElecteursProblematiques();
           }
@@ -172,9 +154,6 @@ export class FichierelectoralComponent implements OnInit {
     });
   }
 
-  /**
-   * Charge la liste des électeurs problématiques
-   */
   chargerElecteursProblematiques(): void {
     if (!this.tentativeId) return;
 
@@ -188,17 +167,11 @@ export class FichierelectoralComponent implements OnInit {
     });
   }
 
-  /**
-   * Filtre les électeurs problématiques par type d'erreur
-   */
   filtrerParTypeErreur(typeErreur: string): void {
     this.filtreTypeErreur = typeErreur;
     this.chargerElecteursProblematiques();
   }
 
-  /**
-   * Valide l'importation finale
-   */
   validerImportation(): void {
     if (!this.tentativeId || !this.peutValider) {
       this.message = 'Validation impossible. Veuillez corriger les erreurs.';
@@ -217,7 +190,6 @@ export class FichierelectoralComponent implements OnInit {
           this.message = `Importation validée avec succès. ${response.nb_electeurs_importes} électeurs importés.`;
           this.messageClass = 'success';
           
-          // Réinitialiser le formulaire
           this.resetForm();
         } else {
           this.message = response.message || 'Erreur lors de la validation.';
@@ -231,14 +203,11 @@ export class FichierelectoralComponent implements OnInit {
     });
   }
 
-  /**
-   * Réinitialise l'état d'upload (admin uniquement)
-   */
   reinitialiserEtatUpload(): void {
     this.fileUploadService.reinitialiserEtatUpload().subscribe({
       next: (response) => {
         if (response.success) {
-          this.message = response.message;
+          this.message = response.message || 'État d\'upload réinitialisé avec succès.';
           this.messageClass = 'success';
           this.resetForm();
           this.uploadForm.enable();
@@ -253,9 +222,6 @@ export class FichierelectoralComponent implements OnInit {
     });
   }
 
-  /**
-   * Réinitialise le formulaire et les états
-   */
   resetForm(): void {
     this.uploadForm.reset();
     this.isUploadComplete = false;
@@ -267,9 +233,6 @@ export class FichierelectoralComponent implements OnInit {
     this.filtreTypeErreur = '';
   }
 
-  /**
-   * Gère les erreurs API de manière uniforme
-   */
   private handleApiError(error: any, defaultMessage: string): void {
     console.error('Erreur API:', error);
     

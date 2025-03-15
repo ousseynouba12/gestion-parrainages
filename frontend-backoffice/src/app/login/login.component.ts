@@ -6,8 +6,8 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
-  standalone: true, // ✅ Composant standalone
-  imports: [FormsModule, CommonModule], // Import des modules nécessaires
+  standalone: true,
+  imports: [FormsModule, CommonModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
@@ -15,19 +15,28 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
   errorMessage: string = '';
+  isLoading: boolean = false;
 
   constructor(private router: Router, private authService: AuthService) {}
 
-  // Méthode appelée lors de la soumission du formulaire
   onLogin() {
     if (this.email && this.password) {
+      this.isLoading = true;
+      this.errorMessage = '';
+      
       this.authService.login(this.email, this.password).subscribe({
         next: (response) => {
-          // Redirection vers le tableau de bord après une connexion réussie
+          this.isLoading = false;
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
-          this.errorMessage = 'Email ou mot de passe incorrect';
+          this.isLoading = false;
+          console.error('Erreur de connexion:', error);
+          if (error.status === 401) {
+            this.errorMessage = 'Email ou mot de passe incorrect';
+          } else {
+            this.errorMessage = 'Erreur de connexion. Veuillez réessayer.';
+          }
         },
       });
     } else {
