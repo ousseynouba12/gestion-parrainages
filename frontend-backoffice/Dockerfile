@@ -5,7 +5,7 @@ FROM node:18 AS build
 WORKDIR /app
 
 # Copier uniquement les fichiers nécessaires pour installer les dépendances
-COPY frontend-candidat/package*.json ./
+COPY frontend-backoffice/package*.json ./
 
 # Installer les dépendances
 RUN npm install
