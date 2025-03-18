@@ -4,7 +4,7 @@
   <!-- Étape de vérification -->
   <div *ngIf="etapeCreation === 'verification'">
       <label for="carteElecteur">Numéro de Carte d'Électeur</label>
-      <input type="text" id="carteElecteur" [(ngModel)]="carteElecteur" placeholder="Entrez le numéro" required>
+      <input type="text" id="carteElecteur" [(ngModel)]="numElecteur" placeholder="Entrez le numéro" required>
       <p *ngIf="messageErreur" class="error">{{ messageErreur }}</p>
       <button (click)="verifierCandidat()">Vérifier</button>
   </div>
@@ -25,7 +25,8 @@
           <input type="date" [(ngModel)]="dateNaissance" disabled>
       </div>
       
-      <h3>Informations Candidat</h3>
+      <h3>Informations Complémentaires</h3>
+
       <div class="form-group">
           <label>Email *</label>
           <input type="email" [(ngModel)]="email" placeholder="Email" required>
@@ -39,8 +40,6 @@
           <input type="text" [(ngModel)]="partiPolitique" placeholder="Parti Politique">
       </div>
       
-      
-      <h3>Informations Complémentaires</h3>
       <div class="form-group">
           <label>Slogan</label>
           <input type="text" [(ngModel)]="slogan" placeholder="Slogan du candidat">

@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -30,7 +31,9 @@ export class AuthService {
     return this.http.post<any>(`${this.apiUrl}/auth/token`, formData.toString(), {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
+        
       }
+      
     }).pipe(
       tap(response => {
         if (this.isBrowser) {
@@ -39,6 +42,7 @@ export class AuthService {
         this.isAuthenticatedSubject.next(true);
       })
     );
+
   }
   
   logout(): void {
@@ -65,6 +69,6 @@ export class AuthService {
   }
   
   refreshToken(): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/token/refresh`, {});
+    return this.http.post<any>(`${this.apiUrl}/auth/token/refresh`, {});
   }
 }

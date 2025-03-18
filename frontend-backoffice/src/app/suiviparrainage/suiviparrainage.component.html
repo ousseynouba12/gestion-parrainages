@@ -1,34 +1,148 @@
 <div class="dashboard-container">
-    <h2>Évolution des Parrainages</h2>
+  <mat-card class="main-card">
+    <mat-card-header>
+      <mat-card-title>Suivi des Parrainages</mat-card-title>
+      <mat-card-subtitle>
+        Total: {{ totalParrainages }} parrainages | Objectif: {{ objectifParrainages }}
+      </mat-card-subtitle>
+      <div class="spacer"></div>
+      <div class="header-actions">
+        <button mat-icon-button color="primary" (click)="refreshData()">
+          <mat-icon>refresh</mat-icon>
+        </button>
+        <button mat-button [color]="autoRefresh ? 'accent' : 'primary'" (click)="toggleAutoRefresh()">
+          <mat-icon>{{ autoRefresh ? 'pause' : 'play_arrow' }}</mat-icon>
+          {{ autoRefresh ? 'Pause' : 'Auto' }}
+        </button>
+      </div>
+    </mat-card-header>
+
+    <mat-divider></mat-divider>
+    
+    <mat-card-content>
+      <!-- Statistiques globales -->
+      <div class="progress-section">
+        <h3>Progression globale</h3>
+        <mat-progress-bar 
+          mode="determinate" 
+          [value]="(totalParrainages / objectifParrainages) * 100">
+        </mat-progress-bar>
+        <div class="progress-label">
+          {{ totalParrainages }} / {{ objectifParrainages }} 
+          ({{ ((totalParrainages / objectifParrainages) * 100).toFixed(1) }}%)
+        </div>
+      </div>
+
+      <!-- Graphique des parrainages -->
+      <div class="chart-container">
+        <h3>Répartition des parrainages par candidat</h3>
+        <ngx-charts-bar-vertical
+          [results]="chartData"
+          [scheme]="colorScheme"
+          [gradient]="false"
+          [xAxis]="true"
+          [yAxis]="true"
+          [legend]="true"
+          [showXAxisLabel]="true"
+          [showYAxisLabel]="true"
+          xAxisLabel="Candidats"
+          yAxisLabel="Nombre de Parrainages">
+        </ngx-charts-bar-vertical>
+      </div>
+      
+      <!-- Tableau des statistiques -->
+      <div class="table-container">
+        <h3>Détails par candidat</h3>
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+          <!-- Colonne candidat -->
+          <ng-container matColumnDef="candidat">
+            <th mat-header-cell *matHeaderCellDef>Candidat</th>
+            <td mat-cell *matCellDef="let row">{{ row.candidat }}</td>
+          </ng-container>
+          
+          <!-- Colonne nombre de parrainages -->
+          <ng-container matColumnDef="count">
+            <th mat-header-cell *matHeaderCellDef>Parrainages</th>
+            <td mat-cell *matCellDef="let row">{{ row.count }}</td>
+          </ng-container>
+          
+          <!-- Colonne pourcentage -->
+          <ng-container matColumnDef="percentage">
+            <th mat-header-cell *matHeaderCellDef>% du total</th>
+            <td mat-cell *matCellDef="let row">{{ row.percentage }}%</td>
+          </ng-container>
+          
+          <!-- Colonne progression -->
+          <ng-container matColumnDef="progress">
+            <th mat-header-cell *matHeaderCellDef>Progression</th>
+            <td mat-cell *matCellDef="let row">
+              <mat-progress-bar 
+                mode="determinate" 
+                [value]="row.progress" 
+                [color]="row.progress >= 100 ? 'accent' : 'primary'">
+              </mat-progress-bar>
+              <div class="progress-label-small">{{ row.progress.toFixed(1) }}%</div>
+            </td>
+          </ng-container>
+          
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr 
+            mat-row 
+            *matRowDef="let row; columns: displayedColumns;"
+            (click)="viewCandidatDetails(row.candidat)"
+            class="table-row-clickable">
+          </tr>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
   
-    <!-- Graphique des parrainages -->
-    <ngx-charts-bar-vertical
-      [results]="chartData"
-      [scheme]="'cool'"
-      [gradient]="false"
-      [xAxis]="true"
-      [yAxis]="true"
-      [legend]="true"
-      [showXAxisLabel]="true"
-      [showYAxisLabel]="true"
-      xAxisLabel="Candidats"
-      yAxisLabel="Nombre de Parrainages">
-    </ngx-charts-bar-vertical>
-  
-    <!-- Tableau des statistiques -->
-    <table mat-table  class="mat-elevation-z8">
-      <ng-container matColumnDef="candidat">
-        <th mat-header-cell *matHeaderCellDef> Candidat </th>
-        <td mat-cell *matCellDef="let p"> {{ p.candidat }} </td>
-      </ng-container>
-  
-      <ng-container matColumnDef="nombre">
-        <th mat-header-cell *matHeaderCellDef> Nombre de Parrainages </th>
-        <td mat-cell *matCellDef="let p"> {{ stats[p.candidat] }} </td>
-      </ng-container>
-  
-      <tr mat-header-row *matHeaderRowDef="['candidat', 'nombre']"></tr>
-      <tr mat-row *matRowDef="let row; columns: ['candidat', 'nombre'];"></tr>
-    </table>
-  </div>
-  
+  <!-- Vue détaillée d'un candidat -->
+  <mat-card *ngIf="selectedCandidat" class="details-card mat-elevation-z8">
+    <mat-card-header>
+      <mat-card-title>Détails pour {{ selectedCandidat }}</mat-card-title>
+      <div class="spacer"></div>
+      <button mat-icon-button (click)="closeDetails()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-card-header>
+    
+    <mat-divider></mat-divider>
+    
+    <mat-card-content>
+      <div class="details-stats">
+        <div class="stat-item">
+          <div class="stat-value">{{ parrainagesParCandidat.length }}</div>
+          <div class="stat-label">Parrainages</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">{{ ((parrainagesParCandidat.length / objectifParrainages) * 100).toFixed(1) }}%</div>
+          <div class="stat-label">De l'objectif</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">{{ ((parrainagesParCandidat.length / totalParrainages) * 100).toFixed(1) }}%</div>
+          <div class="stat-label">Du total</div>
+        </div>
+      </div>
+      
+      <h3>Liste des parrainages</h3>
+      <table *ngIf="parrainagesParCandidat.length > 0" class="details-table mat-elevation-z2">
+        <thead>
+          <tr>
+            <th>Électeur</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of parrainagesParCandidat">
+            <td>{{ p.numElecteur }}</td>
+            <td>{{ p.dateParrainage | date:'dd/MM/yyyy HH:mm' }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="parrainagesParCandidat.length === 0" class="no-data">
+        Aucun parrainage disponible.
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

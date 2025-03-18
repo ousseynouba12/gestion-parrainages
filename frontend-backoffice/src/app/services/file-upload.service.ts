@@ -2,69 +2,53 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface ControlResponse {
-  success: boolean;
-  message?: string;
-  statistiques: {
-    nbElecteursTotal: number;
-    nbElecteursValides: number;
-    nbElecteursInvalides: number;
-    typesErreurs: { [key: string]: number };
-  };
-  peut_valider: boolean;
-}
-
-export interface ElecteurProblematique {
-  numElecteur: string;
-  nom: string;
-  prenom: string;
-  erreurs: string[];
-}
-
 @Injectable({
   providedIn: 'root'
 })
-export class FileUploadService {
-  private apiUrl = 'https://gestion-parrainages.onrender.com';
+export class ElectoralFileService {
+  private apiUrl = 'https://gestion-parrainages.onrender.com/api/v1/electoral';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('access_token');
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-  }
-
+  // Vérifier si un upload est autorisé
   checkUploadStatus(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/statut-upload`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/statut-upload`);
   }
 
+  // Upload du fichier électoral
   uploadElectoralFile(file: File, checksum: string): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('checksum', checksum);
 
-    return this.http.post<any>(`${this.apiUrl}/upload-fichier-electoral`, formData, { headers: this.getHeaders() });
+    return this.http.post(`${this.apiUrl}/upload-fichier-electoral`, formData);
   }
 
-  controlerElecteurs(tentativeId: number): Observable<ControlResponse> {
-    return this.http.post<ControlResponse>(`${this.apiUrl}/controler-electeurs/${tentativeId}`, {}, { headers: this.getHeaders() });
+  // Contrôler les électeurs
+  controlElectors(tentativeId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/controler-electeurs/${tentativeId}`, {});
   }
 
-  getElecteursProblematiques(tentativeId: number, typeErreur: string = ''): Observable<any> {
-    let url = `${this.apiUrl}/electeurs-problematiques/${tentativeId}`;
-    if (typeErreur) {
-      url += `?type_erreur=${typeErreur}`;
-    }
-    return this.http.get<any>(url, { headers: this.getHeaders() });
+  // Valider l'importation
+  validateImport(tentativeId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/valider-importation/${tentativeId}`, {});
   }
 
-  validerImportation(tentativeId: number): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/valider-importation/${tentativeId}`, {}, { headers: this.getHeaders() });
+  // Obtenir les statistiques d'importation
+  getImportStatistics(tentativeId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/statistiques-importation/${tentativeId}`);
   }
 
-  reinitialiserEtatUpload(): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/reinitialiser-etat-upload`, {}, { headers: this.getHeaders() });
+  // Obtenir les électeurs problématiques
+  getProblematicElectors(tentativeId: number, errorType?: string): Observable<any> {
+    const url = errorType 
+      ? `${this.apiUrl}/electeurs-problematiques/${tentativeId}?type_erreur=${errorType}`
+      : `${this.apiUrl}/electeurs-problematiques/${tentativeId}`;
+    return this.http.get(url);
+  }
+
+  // Réinitialiser l'état d'upload (admin uniquement)
+  resetUploadState(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/reinitialiser-etat-upload`, {});
   }
 }

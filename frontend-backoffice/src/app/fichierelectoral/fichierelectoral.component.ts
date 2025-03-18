@@ -1,251 +1,131 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component } from '@angular/core';
+import { ElectoralFileService } from '../services/file-upload.service';
 import { CommonModule } from '@angular/common';
-import { FileUploadService, ControlResponse, ElecteurProblematique } from '../services/file-upload.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-fichierelectoral',
-  standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  selector: 'app-upload-electoral-file',
+  imports :[CommonModule,FormsModule],
   templateUrl: './fichierelectoral.component.html',
-  styleUrls: ['./fichierelectoral.component.css'],
+  styleUrls: ['./fichierelectoral.component.css']
 })
-export class FichierelectoralComponent implements OnInit {
-  uploadForm: FormGroup;
-  message: string = '';
-  messageClass: string = '';
-  
-  // États du processus d'importation
-  isUploading: boolean = false;
-  isUploadComplete: boolean = false;
-  isProcessing: boolean = false;
-  isValidating: boolean = false;
-  
-  // Données de la tentative d'importation
+export class FichierelectoralComponent {
+  file: File | null = null;
+  checksum: string = '';
+  uploadStatus: any = null;
   tentativeId: number | null = null;
-  statistiques: ControlResponse | null = null;
-  peutValider: boolean = false;
-  
-  // Liste des électeurs problématiques
-  electeursProblematiques: ElecteurProblematique[] = [];
-  
-  // Options de filtrage
-  typesErreurs: string[] = [];
-  filtreTypeErreur: string = '';
+  controlResult: any = null;
+  importStatistics: any = null;
+  problematicElectors: any = null;
 
-  constructor(
-    private fb: FormBuilder, 
-    private fileUploadService: FileUploadService
-  ) {
-    this.uploadForm = this.fb.group({
-      checksum: ['', [Validators.required, Validators.minLength(64), Validators.maxLength(64)]],
-      file: [null, Validators.required],
-    });
+  constructor(private electoralFileService: ElectoralFileService) {}
+
+  onFileChange(event: any): void {
+    this.file = event.target.files[0];
   }
 
-  ngOnInit(): void {
-    this.checkUploadStatus();
+  onChecksumChange(event: any): void {
+    this.checksum = event.target.value;
   }
 
   checkUploadStatus(): void {
-    this.fileUploadService.checkUploadStatus().subscribe({
-      next: (response) => {
-        if (!response.upload_autorise) {
-          this.message = 'Un fichier électoral est déjà en cours de traitement. Contactez un administrateur si nécessaire.';
-          this.messageClass = 'warning';
-          this.uploadForm.disable();
-        }
+    this.electoralFileService.checkUploadStatus().subscribe(
+      (response) => {
+        this.uploadStatus = response;
       },
-      error: (error) => {
-        this.message = 'Erreur lors de la vérification du statut d\'upload.';
-        this.messageClass = 'error';
-        console.error('Erreur:', error);
+      (error) => {
+        console.error('Error checking upload status:', error);
       }
-    });
+    );
   }
 
-  onFileChange(event: any): void {
-    if (event.target.files.length > 0) {
-      const file = event.target.files[0];
-      this.uploadForm.patchValue({ file: file });
-    }
-  }
-
-  submitForm(): void {
-    if (this.uploadForm.invalid) {
-      this.message = 'Veuillez remplir tous les champs correctement.';
-      this.messageClass = 'error';
-      return;
-    }
-
-    const checksum = this.uploadForm.get('checksum')?.value;
-    const file = this.uploadForm.get('file')?.value;
-
-    this.message = 'Fichier en cours de vérification...';
-    this.messageClass = 'info';
-    this.isUploading = true;
-
-    this.fileUploadService.checkUploadStatus().subscribe({
-      next: (statusResponse) => {
-        if (statusResponse.upload_autorise) {
-          this.fileUploadService.uploadElectoralFile(file, checksum).subscribe({
-            next: (uploadResponse) => {
-              this.message = 'Fichier téléchargé avec succès. Analyse en cours...';
-              this.messageClass = 'success';
-              this.isUploading = false;
-              this.isUploadComplete = true;
-              this.tentativeId = uploadResponse.tentative_id;
-              
-              this.controlerElecteurs();
-            },
-            error: (uploadError) => {
-              this.isUploading = false;
-              this.handleApiError(uploadError, 'Erreur lors de l\'upload du fichier');
-            },
-          });
-        } else {
-          this.isUploading = false;
-          this.message = 'L\'upload n\'est pas autorisé pour le moment.';
-          this.messageClass = 'error';
+  uploadFile(): void {
+    if (this.file && this.checksum) {
+      this.electoralFileService.uploadElectoralFile(this.file, this.checksum).subscribe(
+        (response) => {
+          this.tentativeId = response.tentative_id;
+          console.log('File uploaded successfully:', response);
+        },
+        (error) => {
+          console.error('Error uploading file:', error);
         }
-      },
-      error: (statusError) => {
-        this.isUploading = false;
-        this.handleApiError(statusError, 'Erreur lors de la vérification du statut d\'upload');
-      },
-    });
-  }
-
-  controlerElecteurs(): void {
-    if (!this.tentativeId) {
-      this.message = 'Identifiant de tentative manquant.';
-      this.messageClass = 'error';
-      return;
-    }
-
-    this.isProcessing = true;
-    this.message = 'Contrôle des électeurs en cours...';
-    this.messageClass = 'info';
-
-    this.fileUploadService.controlerElecteurs(this.tentativeId).subscribe({
-      next: (response) => {
-        this.isProcessing = false;
-        this.statistiques = response;
-        this.peutValider = response.peut_valider;
-        
-        if (response.success) {
-          this.message = `Contrôle terminé : ${response.statistiques.nbElecteursValides} électeurs valides sur ${response.statistiques.nbElecteursTotal}.`;
-          this.messageClass = response.peut_valider ? 'success' : 'warning';
-          
-          this.typesErreurs = Object.keys(response.statistiques.typesErreurs);
-          
-          if (response.statistiques.nbElecteursInvalides > 0) {
-            this.chargerElecteursProblematiques();
-          }
-        } else {
-          this.message = response.message || 'Erreur lors du contrôle des électeurs.';
-          this.messageClass = 'error';
-        }
-      },
-      error: (error) => {
-        this.isProcessing = false;
-        this.handleApiError(error, 'Erreur lors du contrôle des électeurs');
-      }
-    });
-  }
-
-  chargerElecteursProblematiques(): void {
-    if (!this.tentativeId) return;
-
-    this.fileUploadService.getElecteursProblematiques(this.tentativeId, this.filtreTypeErreur).subscribe({
-      next: (response) => {
-        this.electeursProblematiques = response.electeurs;
-      },
-      error: (error) => {
-        console.error('Erreur lors du chargement des électeurs problématiques:', error);
-      }
-    });
-  }
-
-  filtrerParTypeErreur(typeErreur: string): void {
-    this.filtreTypeErreur = typeErreur;
-    this.chargerElecteursProblematiques();
-  }
-
-  validerImportation(): void {
-    if (!this.tentativeId || !this.peutValider) {
-      this.message = 'Validation impossible. Veuillez corriger les erreurs.';
-      this.messageClass = 'error';
-      return;
-    }
-
-    this.isValidating = true;
-    this.message = 'Validation de l\'importation en cours...';
-    this.messageClass = 'info';
-
-    this.fileUploadService.validerImportation(this.tentativeId).subscribe({
-      next: (response) => {
-        this.isValidating = false;
-        if (response.success) {
-          this.message = `Importation validée avec succès. ${response.nb_electeurs_importes} électeurs importés.`;
-          this.messageClass = 'success';
-          
-          this.resetForm();
-        } else {
-          this.message = response.message || 'Erreur lors de la validation.';
-          this.messageClass = 'error';
-        }
-      },
-      error: (error) => {
-        this.isValidating = false;
-        this.handleApiError(error, 'Erreur lors de la validation de l\'importation');
-      }
-    });
-  }
-
-  reinitialiserEtatUpload(): void {
-    this.fileUploadService.reinitialiserEtatUpload().subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.message = response.message || 'État d\'upload réinitialisé avec succès.';
-          this.messageClass = 'success';
-          this.resetForm();
-          this.uploadForm.enable();
-        } else {
-          this.message = response.message || 'Erreur lors de la réinitialisation.';
-          this.messageClass = 'error';
-        }
-      },
-      error: (error) => {
-        this.handleApiError(error, 'Erreur lors de la réinitialisation');
-      }
-    });
-  }
-
-  resetForm(): void {
-    this.uploadForm.reset();
-    this.isUploadComplete = false;
-    this.tentativeId = null;
-    this.statistiques = null;
-    this.peutValider = false;
-    this.electeursProblematiques = [];
-    this.typesErreurs = [];
-    this.filtreTypeErreur = '';
-  }
-
-  private handleApiError(error: any, defaultMessage: string): void {
-    console.error('Erreur API:', error);
-    
-    if (error.status === 403) {
-      this.message = 'Vous n\'êtes pas autorisé à effectuer cette action.';
-    } else if (error.status === 401) {
-      this.message = 'Votre session a expiré. Veuillez vous reconnecter.';
-    } else if (error.error && error.error.message) {
-      this.message = error.error.message;
+      );
     } else {
-      this.message = `${defaultMessage}. Erreur: ${error.status || 'inconnue'}`;
+      console.error('File and checksum are required.');
     }
-    
-    this.messageClass = 'error';
+  }
+
+  controlElectors(): void {
+    if (this.tentativeId) {
+      this.electoralFileService.controlElectors(this.tentativeId).subscribe(
+        (response) => {
+          this.controlResult = response;
+          console.log('Electors controlled successfully:', response);
+        },
+        (error) => {
+          console.error('Error controlling electors:', error);
+        }
+      );
+    } else {
+      console.error('Tentative ID is required.');
+    }
+  }
+
+  validateImport(): void {
+    if (this.tentativeId) {
+      this.electoralFileService.validateImport(this.tentativeId).subscribe(
+        (response) => {
+          console.log('Import validated successfully:', response);
+        },
+        (error) => {
+          console.error('Error validating import:', error);
+        }
+      );
+    } else {
+      console.error('Tentative ID is required.');
+    }
+  }
+
+  getImportStatistics(): void {
+    if (this.tentativeId) {
+      this.electoralFileService.getImportStatistics(this.tentativeId).subscribe(
+        (response) => {
+          this.importStatistics = response;
+          console.log('Import statistics:', response);
+        },
+        (error) => {
+          console.error('Error getting import statistics:', error);
+        }
+      );
+    } else {
+      console.error('Tentative ID is required.');
+    }
+  }
+
+  getProblematicElectors(errorType?: string): void {
+    if (this.tentativeId) {
+      this.electoralFileService.getProblematicElectors(this.tentativeId, errorType).subscribe(
+        (response) => {
+          this.problematicElectors = response;
+          console.log('Problematic electors:', response);
+        },
+        (error) => {
+          console.error('Error getting problematic electors:', error);
+        }
+      );
+    } else {
+      console.error('Tentative ID is required.');
+    }
+  }
+
+  resetUploadState(): void {
+    this.electoralFileService.resetUploadState().subscribe(
+      (response) => {
+        console.log('Upload state reset successfully:', response);
+      },
+      (error) => {
+        console.error('Error resetting upload state:', error);
+      }
+    );
   }
 }

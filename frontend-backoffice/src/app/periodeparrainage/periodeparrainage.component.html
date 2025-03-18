@@ -1,26 +1,81 @@
 <div class="container mt-5">
-    <h2 class="text-center">Configuration des Parrainages</h2>
+    <h2 class="text-center mb-4">Gestion des Périodes de Parrainage</h2>
 
-    <div class="mb-3">
-        <label for="startDate" class="form-label">Date de début :</label>
-        <input type="date" id="startDate" class="form-control" [(ngModel)]="startDate" (change)="validateDates()">
-        <div *ngIf="startError" class="text-danger">{{ startError }}</div>
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Ajouter une nouvelle période</h4>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="startDate" class="form-label">Date de début :</label>
+                <input type="date" id="startDate" class="form-control" [(ngModel)]="startDate" (change)="validateDates()">
+                <div *ngIf="startError" class="text-danger small mt-1">{{ startError }}</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="endDate" class="form-label">Date de fin :</label>
+                <input type="date" id="endDate" class="form-control" [(ngModel)]="endDate" (change)="validateDates()">
+                <div *ngIf="endError" class="text-danger small mt-1">{{ endError }}</div>
+            </div>
+
+            <button class="btn btn-success w-100" [disabled]="!isValid || loading" (click)="saveDates()">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Enregistrer
+            </button>
+        </div>
     </div>
 
-    <div class="mb-3">
-        <label for="endDate" class="form-label">Date de fin :</label>
-        <input type="date" id="endDate" class="form-control" [(ngModel)]="endDate" (change)="validateDates()">
-        <div *ngIf="endError" class="text-danger">{{ endError }}</div>
+    <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ successMessage }}
+        <button type="button" class="btn-close" (click)="successMessage = ''"></button>
     </div>
 
-    <button class="btn btn-success w-100" [disabled]="!isValid" (click)="saveDates()">Enregistrer</button>
+    <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ errorMessage }}
+        <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+    </div>
 
-    <p *ngIf="successMessage" class="text-success mt-3">{{ successMessage }}</p>
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Périodes de Parrainage Existantes</h4>
+        </div>
+        <div class="card-body">
+            <div *ngIf="loading && periodes.length === 0" class="text-center my-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Chargement...</span>
+                </div>
+                <p class="mt-2">Chargement des périodes...</p>
+            </div>
 
-    <h3 class="mt-5">Périodes de Parrainage</h3>
-    <ul class="list-group">
-        <li *ngFor="let periode of periodes" class="list-group-item">
-            <strong>Début:</strong> {{ periode.date_debut }} | <strong>Fin:</strong> {{ periode.date_fin }}
-        </li>
-    </ul>
+            <div *ngIf="!loading && periodes.length === 0" class="alert alert-info">
+                Aucune période de parrainage n'est configurée.
+            </div>
+
+            <div class="table-responsive" *ngIf="periodes.length > 0">
+                <table class="table table-striped table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Date de début</th>
+                            <th scope="col">Date de fin</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let periode of periodes; let i = index">
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ formatDate(periode.date_debut) }}</td>
+                            <td>{{ formatDate(periode.date_fin) }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" [disabled]="deleting" (click)="deletePeriode(periode.id)">
+                                    <span *ngIf="deleting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                                    Supprimer
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,14 +1,280 @@
-.container {
-    max-width: 500px;
-    background: white;
-    padding: 20px;
-    margin: 40px 350px ;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-.text-danger {
-    font-size: 0.9em;
-}
-.text-success {
-    font-weight: bold;
-}
+/* Variables pour les couleurs et l'espacement */
+:root {
+    --primary-color: #3f51b5;
+    --primary-hover: #303f9f;
+    --success-color: #4caf50;
+    --success-hover: #388e3c;
+    --danger-color: #f44336;
+    --danger-hover: #d32f2f;
+    --light-bg: #f5f7fa;
+    --border-radius: 8px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+  }
+  
+  /* Style général de la page */
+  body {
+    font-family: 'Roboto', 'Segoe UI', sans-serif;
+    background-color: var(--light-bg);
+    color: #333;
+    line-height: 1.6;
+  }
+  
+  .container {
+    max-width: 1000px;
+    padding: 2rem;
+    margin: 90px;
+  }
+  
+  /* Titre principal */
+  h2.text-center {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 2rem;
+    position: relative;
+    padding-bottom: 0.5rem;
+  }
+  
+  h2.text-center::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background-color: var(--primary-color);
+    border-radius: 2px;
+  }
+  
+  /* Cartes */
+  .card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+    margin-bottom: 2rem;
+    transition: var(--transition);
+  }
+  
+  .card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .card-header {
+    padding: 1rem 1.5rem;
+    border-bottom: none;
+  }
+  
+  .card-header.bg-primary {
+    background: var(--primary-color) !important;
+  }
+  
+  .card-header h4 {
+    font-weight: 500;
+    font-size: 1.25rem;
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  /* Formulaires */
+  .form-label {
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 0.5rem;
+  }
+  
+  .form-control {
+    border-radius: var(--border-radius);
+    border: 1px solid #ddd;
+    padding: 0.75rem 1rem;
+    transition: var(--transition);
+  }
+  
+  .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(63, 81, 181, 0.25);
+  }
+  
+  /* Messages d'erreur */
+  .text-danger {
+    color: var(--danger-color) !important;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+  }
+  
+  /* Boutons */
+  .btn {
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .btn-success {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+  }
+  
+  .btn-success:hover:not([disabled]) {
+    background-color: var(--success-hover);
+    border-color: var(--success-hover);
+  }
+  
+  .btn-danger {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+  }
+  
+  .btn-danger:hover:not([disabled]) {
+    background-color: var(--danger-hover);
+    border-color: var(--danger-hover);
+  }
+  
+  .btn-sm {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.875rem;
+  }
+  
+  .btn:disabled {
+    opacity: 0.65;
+  }
+  
+  /* Effet d'onde sur les boutons */
+  .btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    color: #000;
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%, -50%);
+    transform-origin: 50% 50%;
+  }
+  
+  .btn:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+  }
+  
+  @keyframes ripple {
+    0% {
+      transform: scale(0, 0);
+      opacity: 0.5;
+    }
+    100% {
+      transform: scale(20, 20);
+      opacity: 0;
+    }
+  }
+  
+  /* Alertes */
+  .alert {
+    border-radius: var(--border-radius);
+    border: none;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .alert-success {
+    background-color: rgba(76, 175, 80, 0.1);
+    color: var(--success-color);
+  }
+  
+  .alert-danger {
+    background-color: rgba(244, 67, 54, 0.1);
+    color: var(--danger-color);
+  }
+  
+  .alert-info {
+    background-color: rgba(33, 150, 243, 0.1);
+    color: #0288d1;
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .btn-close {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: inherit;
+    opacity: 0.5;
+    padding: 0;
+    margin-left: 1rem;
+  }
+  
+  .btn-close:hover {
+    opacity: 1;
+  }
+  
+  /* Tableau */
+  .table-responsive {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+  }
+  
+  .table {
+    margin-bottom: 0;
+  }
+  
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+  
+  .table-hover tbody tr:hover {
+    background-color: rgba(63, 81, 181, 0.05);
+  }
+  
+  .table th {
+    border-top: none;
+    font-weight: 600;
+    color: #555;
+    background-color: #f2f4f8;
+  }
+  
+  .table th, .table td {
+    padding: 1rem;
+    vertical-align: middle;
+  }
+  
+  /* Loaders */
+  .spinner-border {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-width: 0.15em;
+  }
+  
+  /* État vide */
+  .text-center.my-4 {
+    padding: 2rem 0;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .container {
+      padding: 1rem;
+    }
+    
+    .card-body {
+      padding: 1rem;
+    }
+    
+    .btn {
+      padding: 0.6rem 1.2rem;
+    }
+    
+    .table th, .table td {
+      padding: 0.75rem;
+    }
+  }
