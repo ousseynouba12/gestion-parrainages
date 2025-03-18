@@ -4,20 +4,11 @@ FROM node:20-alpine AS build
 # Définir le répertoire de travail
 WORKDIR /app
 
-# Copier package.json et package-lock.json pour optimiser la mise en cache des dépendances
-COPY frontend-backoffice/package*.json ./
+# Copier tout le contenu du dossier frontend-backoffice
+COPY ./frontend-backoffice/ ./
 
 # Installer les dépendances
 RUN npm ci
-
-# Copier les fichiers de configuration
-COPY frontend-backoffice/angular.json ./
-COPY frontend-backoffice/tsconfig*.json ./
-COPY frontend-backoffice/proxy.conf.json ./
-
-# Copier les sources
-COPY frontend-backoffice/src ./src
-COPY frontend-backoffice/public ./public
 
 # Construire l'application en mode production
 RUN npm run build -- --configuration production
