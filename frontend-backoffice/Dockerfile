@@ -2,7 +2,7 @@
 FROM node:18 AS build
 
 # Définir le répertoire de travail
-WORKDIR /app
+WORKDIR /src
 
 # Copier uniquement les fichiers nécessaires pour installer les dépendances
 COPY frontend-backoffice/package*.json ./
