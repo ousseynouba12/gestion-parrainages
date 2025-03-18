@@ -22,7 +22,16 @@ def create_candidat(candidat: CandidatCreate, db: Session = Depends(get_db)):
     
     # Création du candidat
     db_candidat = Candidat(
-        **candidat.model_dump(),
+        numElecteur=candidat.numElecteur,
+        email=candidat.email,
+        telephone=candidat.telephone,
+        partiPolitique=candidat.partiPolitique,
+        slogan=candidat.slogan,
+        photo=candidat.photo,
+        couleur1=candidat.couleur1,
+        couleur2=candidat.couleur2,
+        couleur3=candidat.couleur3,
+        urlInfo=candidat.urlInfo
         dateCreation=datetime.utcnow(),
         dateDerniereModification=datetime.utcnow()
     )
