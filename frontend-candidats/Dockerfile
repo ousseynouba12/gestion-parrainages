@@ -11,24 +11,24 @@ COPY tsconfig*.json ./
 RUN npm ci
 
 # Copie du code source
-COPY src ./src
-COPY public ./public
+COPY . .
 
 # Construction de l'application en mode production
 RUN npm run build
 
-# Étape de production avec nginx
-FROM nginx:alpine
-WORKDIR /usr/share/nginx/html
+# Étape de production
+FROM node:20-alpine
+WORKDIR /app
 
-# Copie de la configuration nginx personnalisée si nécessaire
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copie des fichiers générés et des dépendances
+COPY --from=build /app/dist /app/dist
+COPY --from=build /app/package*.json ./
 
-# Copie des fichiers générés lors de l'étape de construction
-COPY --from=build /app/dist/frontend-candidats/browser .
+# Installation des dépendances de production uniquement
+RUN npm ci --omit=dev
 
-# Exposition du port 80
-EXPOSE 80
+# Exposition du port (3000 est généralement le port par défaut pour Express)
+EXPOSE 3000
 
-# Commande de démarrage
-CMD ["nginx", "-g", "daemon off;"]
+# Commande de démarrage du serveur SSR
+CMD ["node", "dist/frontend-candidats/server/server.mjs"]
