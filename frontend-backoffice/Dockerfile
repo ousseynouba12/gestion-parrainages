@@ -1,32 +1,55 @@
-# Étape 1 : Construire l'application Angular
-FROM node:18 AS build
+# Étape de construction
+FROM node:20-alpine AS build
 
 # Définir le répertoire de travail
-WORKDIR /src
+WORKDIR /app
 
-# Copier uniquement les fichiers nécessaires pour installer les dépendances
+# Copier package.json et package-lock.json pour optimiser la mise en cache des dépendances
 COPY frontend-backoffice/package*.json ./
 
 # Installer les dépendances
-RUN npm install
+RUN npm ci
 
-# Copier le reste des fichiers du projet Angular
-COPY frontend-backoffice ./
+# Copier les fichiers de configuration
+COPY frontend-backoffice/angular.json ./
+COPY frontend-backoffice/tsconfig*.json ./
+COPY frontend-backoffice/proxy.conf.json ./
 
-# Construire l'application Angular
-RUN npm run build --prod
+# Copier les sources
+COPY frontend-backoffice/src ./src
+COPY frontend-backoffice/public ./public
 
-# Étape 2 : Servir avec Nginx
+# Construire l'application en mode production
+RUN npm run build -- --configuration production
+
+# Étape de production avec Nginx
 FROM nginx:alpine
 
-# Copier les fichiers de build Angular dans Nginx
-COPY --from=build /app/dist/frontend-backoffice /usr/share/nginx/html
+# Copier une configuration Nginx personnalisée pour les SPA Angular
+RUN rm -rf /etc/nginx/conf.d/*
+COPY <<EOF /etc/nginx/conf.d/default.conf
+server {
+    listen 80;
+    server_name _;
+    root /usr/share/nginx/html;
+    index index.html;
 
-# Ajouter une configuration Nginx personnalisée
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+    # Compression gzip
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+    # Angular routes handling
+    location / {
+        try_files \$uri \$uri/ /index.html;
+    }
+}
+EOF
+
+# Copier les fichiers de build depuis l'étape précédente
+COPY --from=build /app/dist/*/browser /usr/share/nginx/html
 
 # Exposer le port 80
 EXPOSE 80
 
-# Lancer Nginx
+# Démarrer Nginx
 CMD ["nginx", "-g", "daemon off;"]
