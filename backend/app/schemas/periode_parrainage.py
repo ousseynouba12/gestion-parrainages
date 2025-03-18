@@ -5,7 +5,7 @@ from typing import Literal
 class PeriodeParrainageBase(BaseModel):
     dateDebut: date
     dateFin: date
-    etat: Literal["OUVERT", "FERME"]
+    etat: Literal["OUVERT", "FERMÉ"]
 
 class PeriodeParrainage(PeriodeParrainageBase):
     idPeriode: int
