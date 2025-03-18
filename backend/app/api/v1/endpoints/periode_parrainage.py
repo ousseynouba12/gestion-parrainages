@@ -6,10 +6,7 @@ from app.core.database import get_db
 from app.models.periode_parrainage import PeriodeParrainage as PeriodeParrainageModel
 from app.schemas.periode_parrainage import PeriodeParrainageBase, PeriodeParrainage as PeriodeParrainageSchema
 
-router = APIRouter(
-    prefix="/periodes-parrainage",
-    tags=["periodes-parrainage"]
-)
+router = APIRouter()
 
 def validate_dates(date_debut: date, date_fin: date):
     """Valide les contraintes de dates pour une période de parrainage"""
