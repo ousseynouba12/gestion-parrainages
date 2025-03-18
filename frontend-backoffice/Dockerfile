@@ -4,14 +4,14 @@ FROM node:18 AS build
 # Définir le répertoire de travail
 WORKDIR /app
 
-# Copier les fichiers package.json et package-lock.json
-COPY package*.json ./
+# Copier uniquement les fichiers nécessaires pour installer les dépendances
+COPY frontend-candidat/package*.json ./
 
 # Installer les dépendances
 RUN npm install
 
-# Copier tout le projet
-COPY . .
+# Copier le reste des fichiers du projet Angular
+COPY frontend-candidat ./
 
 # Construire l'application Angular
 RUN npm run build --prod
@@ -20,7 +20,7 @@ RUN npm run build --prod
 FROM nginx:alpine
 
 # Copier les fichiers de build Angular dans Nginx
-COPY --from=build /app/dist/frontend-backoffice /usr/share/nginx/html
+COPY --from=build /app/dist/frontend-candidat /usr/share/nginx/html
 
 # Ajouter une configuration Nginx personnalisée
 COPY nginx.conf /etc/nginx/conf.d/default.conf
