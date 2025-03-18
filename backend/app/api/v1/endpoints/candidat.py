@@ -20,23 +20,19 @@ def create_candidat(candidat: CandidatCreate, db: Session = Depends(get_db)):
     if db.query(Candidat).filter(Candidat.numElecteur == candidat.numElecteur).first():
         raise HTTPException(status_code=400, detail="Ce candidat existe déjà.")
     
-    # Création du candidat
+    # Filtrer pour ne garder que les champs existants dans le modèle Candidat
+    candidat_data = {
+        k: v for k, v in candidat.model_dump().items() 
+        if k in ['numElecteur', 'email', 'telephone', 'partiPolitique', 
+                'slogan', 'photo', 'couleur1', 'couleur2', 'couleur3', 'urlInfo']
+    }
+    
+    # Création du candidat avec les champs filtrés
     db_candidat = Candidat(
-        numElecteur=candidat.numElecteur,
-        email=candidat.email,
-        telephone=candidat.telephone,
-        partiPolitique=candidat.partiPolitique,
-        slogan=candidat.slogan,
-        photo=candidat.photo,
-        couleur1=candidat.couleur1,
-        couleur2=candidat.couleur2,
-        couleur3=candidat.couleur3,
-        urlInfo=candidat.urlInfo
+        **candidat_data,
         dateCreation=datetime.utcnow(),
         dateDerniereModification=datetime.utcnow()
-    )
-    
-    # Ajouter et committer pour s'assurer que le candidat est bien enregistré
+    )    # Ajouter et committer pour s'assurer que le candidat est bien enregistré
     db.add(db_candidat)
     db.commit()
     db.refresh(db_candidat)
